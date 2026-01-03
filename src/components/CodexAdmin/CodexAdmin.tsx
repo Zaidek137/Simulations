@@ -30,9 +30,7 @@ const CATEGORY_LABELS = {
 export default function CodexAdmin({ universeData = [] }: CodexAdminProps) {
   const [allEntries, setAllEntries] = useState<CodexEntry[]>([]);
   const [editingEntry, setEditingEntry] = useState<CodexEntry | null>(null);
-  const [isAddingNew, setIsAddingNew] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
-  const [expandedEntry, setExpandedEntry] = useState<string | null>(null);
 
   useEffect(() => {
     loadEntries();
@@ -68,7 +66,6 @@ export default function CodexAdmin({ universeData = [] }: CodexAdminProps) {
       updated_at: new Date().toISOString(),
     };
     setEditingEntry(newEntry);
-    setIsAddingNew(true);
   };
 
   const handleSave = async () => {
@@ -96,7 +93,6 @@ export default function CodexAdmin({ universeData = [] }: CodexAdminProps) {
       console.log('✅ Codex entry saved with ID:', savedId);
       await loadEntries();
       setEditingEntry(null);
-      setIsAddingNew(false);
       alert('✅ Codex entry saved successfully!');
     } catch (error: any) {
       console.error('❌ Error saving codex entry:', error);
@@ -218,7 +214,6 @@ export default function CodexAdmin({ universeData = [] }: CodexAdminProps) {
             onSave={handleSave}
             onCancel={() => {
               setEditingEntry(null);
-              setIsAddingNew(false);
             }}
             universeData={universeData}
             addKnownInfo={addKnownInfo}
@@ -234,8 +229,6 @@ export default function CodexAdmin({ universeData = [] }: CodexAdminProps) {
             entriesByType={entriesByType}
             onEdit={setEditingEntry}
             onDelete={handleDelete}
-            expandedEntry={expandedEntry}
-            setExpandedEntry={setExpandedEntry}
           />
         )}
       </div>
@@ -247,14 +240,10 @@ function EntriesList({
   entriesByType,
   onEdit,
   onDelete,
-  expandedEntry,
-  setExpandedEntry,
 }: {
   entriesByType: Record<CodexEntryType, CodexEntry[]>;
   onEdit: (entry: CodexEntry) => void;
   onDelete: (entryId: string) => void;
-  expandedEntry: string | null;
-  setExpandedEntry: (id: string | null) => void;
 }) {
   return (
     <div className={styles.entriesList}>
