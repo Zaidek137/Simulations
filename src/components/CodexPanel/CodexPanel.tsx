@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import styles from './CodexPanel.module.css';
 import type { CodexEntry, CodexEntryType, Region } from '@/data/codex-types';
@@ -205,7 +205,6 @@ export default function CodexPanel({ onEntrySelect, selectedEntry, universeData 
               <UniversesView 
                 universeData={universeData} 
                 allEntries={allEntries}
-                onEntryClick={handleEntryClick}
                 onUniverseSelect={(universeId) => {
                   setSelectedUniverseId(universeId);
                   setViewMode('universe-categories');
@@ -216,7 +215,6 @@ export default function CodexPanel({ onEntrySelect, selectedEntry, universeData 
               <UniverseCategoriesView
                 universe={universeData.find(u => u.id === selectedUniverseId)!}
                 allEntries={allEntries}
-                entriesByType={entriesByType}
                 onCategoryClick={handleCategoryClick}
               />
             ) : selectedCategory ? (
@@ -382,12 +380,10 @@ function DetailView({ entry }: { entry: CodexEntry }) {
 function UniversesView({
   universeData,
   allEntries,
-  onEntryClick,
   onUniverseSelect
 }: {
   universeData: Region[];
   allEntries: CodexEntry[];
-  onEntryClick: (entry: CodexEntry) => void;
   onUniverseSelect: (universeId: string) => void;
 }) {
   return (
@@ -449,10 +445,9 @@ function UniversesView({
 }
 
 // Universe Categories View Component
-function UniverseCategoriesView({ universe, allEntries, entriesByType, onCategoryClick }: {
+function UniverseCategoriesView({ universe, allEntries, onCategoryClick }: {
   universe: Region;
   allEntries: CodexEntry[];
-  entriesByType: Record<CodexEntryType, CodexEntry[]>;
   onCategoryClick: (category: CodexEntryType) => void;
 }) {
   // Filter entries related to this universe
@@ -516,7 +511,7 @@ function UniverseCategoriesView({ universe, allEntries, entriesByType, onCategor
 }
 
 // Intro Dialog Component - Exported for use in PublicMap
-export function IntroDialog({ onClose }: { onClose: (dontShowAgain: boolean) => void }) {
+export function IntroDialog({ onClose }: { onClose: () => void }) {
   return (
     <motion.div
       className={styles.introOverlay}
@@ -585,13 +580,13 @@ export function IntroDialog({ onClose }: { onClose: (dontShowAgain: boolean) => 
 
         <div className={styles.introFooter}>
           <button
-            onClick={() => onClose(false)}
+            onClick={onClose}
             className={styles.introButtonSecondary}
           >
             Remind Me Later
           </button>
           <button
-            onClick={() => onClose(true)}
+            onClick={onClose}
             className={styles.introButtonPrimary}
           >
             Got It, Don't Show Again

@@ -1,11 +1,10 @@
-import React, { useState, useEffect } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { useState, useEffect } from 'react';
 import styles from './CodexAdmin.module.css';
 import type { CodexEntry, CodexEntryType, Region } from '@/data/codex-types';
 import { fetchCodexEntries, upsertCodexEntry, deleteCodexEntry } from '@/lib/supabase';
 import { 
   Book, Plus, Trash2, Save, X, Users, Building2, Cpu, Gem, Zap, 
-  Lock, Unlock, Eye, EyeOff, ChevronDown, ChevronUp 
+  Lock, Unlock, Eye, EyeOff 
 } from 'lucide-react';
 
 interface CodexAdminProps {
@@ -31,9 +30,7 @@ const CATEGORY_LABELS = {
 export default function CodexAdmin({ universeData = [] }: CodexAdminProps) {
   const [allEntries, setAllEntries] = useState<CodexEntry[]>([]);
   const [editingEntry, setEditingEntry] = useState<CodexEntry | null>(null);
-  const [isAddingNew, setIsAddingNew] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
-  const [expandedEntry, setExpandedEntry] = useState<string | null>(null);
 
   useEffect(() => {
     loadEntries();

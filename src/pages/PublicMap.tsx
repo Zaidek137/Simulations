@@ -153,8 +153,8 @@ export default function PublicMap() {
     zoomResetRef.current?.();
   };
 
-  const handleCloseIntro = (dontShowAgain: boolean) => {
-    // Both options now set the timestamp for 24-hour persistence
+  const handleCloseIntro = () => {
+    // Set timestamp for 24-hour persistence
     sessionStorage.setItem('codex_intro_timestamp', Date.now().toString());
     setShowIntro(false);
   };
