@@ -30,7 +30,9 @@ const CATEGORY_LABELS = {
 export default function CodexAdmin({ universeData = [] }: CodexAdminProps) {
   const [allEntries, setAllEntries] = useState<CodexEntry[]>([]);
   const [editingEntry, setEditingEntry] = useState<CodexEntry | null>(null);
+  const [isAddingNew, setIsAddingNew] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
+  const [expandedEntry, setExpandedEntry] = useState<string | null>(null);
 
   useEffect(() => {
     loadEntries();
