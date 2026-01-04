@@ -4,7 +4,7 @@
 
 export type CodexEntryType = 'character' | 'faction' | 'simulation' | 'artifact' | 'event';
 
-// Universe/Region types for Codex integration
+// Simulation types for Codex integration
 export interface Location {
   id: string;
   name: string;
@@ -15,7 +15,7 @@ export interface Location {
   thumbUrl: string;
 }
 
-export interface Region {
+export interface Simulation {
   id: string;
   name: string;
   description: string;
@@ -27,6 +27,9 @@ export interface Region {
   imageUrl: string;
   locations: Location[];
 }
+
+// Legacy alias for backward compatibility
+export type Region = Simulation;
 
 export interface KnownInfoSection {
   title: string;

@@ -2,43 +2,55 @@
 
 ## What Was Changed
 
-### 🎨 1. Redesigned Public Codex Panel
+### 🎨 1. Neobrutalism Redesign
 
-**Problem**: The original codex was a cramped sidebar that didn't provide a good user experience for browsing lore.
+**Problem**: The codex needed a bold, game-like aesthetic that matched the project's vision.
 
-**Solution**: Completely redesigned as a full-screen overlay with:
-- Beautiful gradient backgrounds and glowing borders
-- Smooth animations (Framer Motion)
-- Three main views:
-  1. **Categories Grid**: Large, clickable category cards
-  2. **Category Entries**: Grid of entry cards within a category
-  3. **Entry Detail**: Full-screen view of selected entry
-- Professional search functionality
-- Responsive layout that works on all screen sizes
+**Solution**: Completely redesigned with Neobrutalism principles:
+- **Thick black borders** (3-5px) on all interactive elements
+- **Hard shadows** with no blur (e.g., `6px 6px 0 #000`)
+- **Bold color palette**: Dark navy (#0D2C40), teal (#126173), yellow (#F2CA50), orange (#F29849), brown (#BF7245)
+- **Flat colors** - no gradients or glows
+- **Minimal border radius** (0-4px maximum)
+- **Chunky, game-like buttons** with transform effects instead of glows
+- **Bold typography** with increased font weights
 
 **Files Changed**:
-- `src/components/CodexPanel/CodexPanel.tsx` - Complete rewrite
-- `src/components/CodexPanel/CodexPanel.module.css` - New full-screen overlay styles
-- `src/data/codex-types.ts` - Added Region and Location types for integration
+- `src/components/CodexPanel/CodexPanel.tsx` - Navigation flow restructured
+- `src/components/CodexPanel/CodexPanel.module.css` - Complete Neobrutalism styling
+- `src/data/codex-types.ts` - Renamed Region to Simulation throughout
 
-### 🌌 2. Added Universe/Simulation Breakdown
+### 🎮 2. Simulations-First Navigation Flow
 
-**Problem**: Users couldn't see how codex entries related to universes and their locations.
+**Problem**: Users saw categories before understanding which simulation they were exploring.
 
-**Solution**: Added a "Universes" tab to the Codex that:
-- Lists all universes in order
-- Shows each universe's locations with thumbnails
-- Displays related codex entries for each universe
-- Provides direct links to view entry details
-- Makes the connection between lore and map locations clear
+**Solution**: Restructured navigation to prioritize simulation selection:
+- **Entry point**: Simulations list with descriptions prominently displayed
+- **No category information** shown until a simulation is selected
+- **Breadcrumb navigation**: Entry → Category → Simulation Categories → Simulations List
+- **Removed tabs** - linear flow instead of parallel navigation
+- Makes the connection between lore and simulations clear from the start
 
 **Features**:
-- Universe cards with icons and descriptions
-- Collapsible location lists
-- Related entries grid with quick navigation
-- Visual hierarchy that matches the map structure
+- Simulation cards with bold styling and prominent descriptions
+- Category selection only after simulation is chosen
+- Back button follows breadcrumb hierarchy
+- Visual hierarchy that guides users through the experience
 
-### ⚙️ 3. Created Codex Admin Interface
+### 🔄 3. Terminology Update: Universe → Simulation
+
+**Change**: Renamed all "Universe" references to "Simulation" throughout the codebase.
+
+**Affected Areas**:
+- Type definitions (`Region` → `Simulation`)
+- Database layer (`fetchRegions` → `fetchSimulations`)
+- Component props (`universeData` → `simulationData`)
+- UI labels and strings
+- Documentation files
+
+**Backward Compatibility**: Legacy type aliases maintained where needed.
+
+### ⚙️ 4. Codex Admin Interface
 
 **Problem**: No way for admins to manage codex entries without directly editing the database.
 
@@ -235,4 +247,5 @@ This update transforms the Codex from a basic sidebar into a **comprehensive lor
 The system is production-ready and provides a solid foundation for managing and displaying complex lore data in an engaging, user-friendly way.
 
 **🎉 All requested features have been implemented successfully!**
+
 

@@ -3,14 +3,14 @@ import UniverseMap from "@/components/UniverseMap/UniverseMap";
 import LocalPointOverlay from "@/components/LocalPointOverlay/LocalPointOverlay";
 import CodexPanel, { IntroDialog } from "@/components/CodexPanel/CodexPanel";
 import { Region, Location, UNIVERSE_DATA, CONFIG, UniverseConfig } from "@/data/universe-data";
-import { fetchRegions, fetchLoreConfig } from "@/lib/supabase";
+import { fetchSimulations, fetchLoreConfig } from "@/lib/supabase";
 import type { CodexEntry } from "@/data/codex-types";
 
 export default function PublicMap() {
   const [selectedRegion, setSelectedRegion] = useState<Region | null>(null);
   const [selectedLocation, setSelectedLocation] = useState<Location | null>(null);
   const [locationOrigin, setLocationOrigin] = useState<{ x: number; y: number } | null>(null);
-  const [universeData, setUniverseData] = useState<Region[]>(UNIVERSE_DATA);
+  const [simulationData, setSimulationData] = useState<Region[]>(UNIVERSE_DATA);
   const [config, setConfig] = useState<UniverseConfig>(CONFIG);
   const [isHydrated, setIsHydrated] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
@@ -41,24 +41,24 @@ export default function PublicMap() {
     async function loadData() {
       try {
         // Try to load from Supabase first
-        const [regionsData, configData] = await Promise.all([
-          fetchRegions(),
+        const [simulationsData, configData] = await Promise.all([
+          fetchSimulations(),
           fetchLoreConfig(),
         ]);
 
-        if (regionsData && regionsData.length > 0) {
+        if (simulationsData && simulationsData.length > 0) {
           // Transform Supabase data to match component format
-          const transformedRegions = regionsData.map((region: any) => ({
-            id: region.region_id,
-            name: region.name,
-            description: region.description,
-            color: region.color,
-            cx: region.cx,
-            cy: region.cy,
-            thumbUrl: region.thumb_url,
-            backgroundUrl: region.background_url,
-            imageUrl: region.image_url,
-            locations: (region.locations || []).map((loc: any) => ({
+          const transformedSimulations = simulationsData.map((simulation: any) => ({
+            id: simulation.region_id,
+            name: simulation.name,
+            description: simulation.description,
+            color: simulation.color,
+            cx: simulation.cx,
+            cy: simulation.cy,
+            thumbUrl: simulation.thumb_url,
+            backgroundUrl: simulation.background_url,
+            imageUrl: simulation.image_url,
+            locations: (simulation.locations || []).map((loc: any) => ({
               id: loc.location_id,
               name: loc.name,
               description: loc.description,
@@ -68,13 +68,13 @@ export default function PublicMap() {
               thumbUrl: loc.thumb_url,
             })),
           }));
-          setUniverseData(transformedRegions);
+          setSimulationData(transformedSimulations);
           console.log('✅ Loaded data from Supabase');
         } else {
           // Fallback to localStorage if Supabase is empty
-          const savedData = localStorage.getItem('universeData');
+          const savedData = localStorage.getItem('simulationData');
           if (savedData) {
-            setUniverseData(JSON.parse(savedData));
+            setSimulationData(JSON.parse(savedData));
             console.log('📦 Loaded data from localStorage');
           } else {
             console.log('📋 Using default fallback data');
@@ -94,15 +94,15 @@ export default function PublicMap() {
       } catch (error) {
         console.error('Error loading data from Supabase:', error);
         // Fallback to localStorage on error
-        const savedData = localStorage.getItem('universeData');
+        const savedData = localStorage.getItem('simulationData');
         const savedConfig = localStorage.getItem('universeConfig');
         
         if (savedData) {
           try {
-            setUniverseData(JSON.parse(savedData));
+            setSimulationData(JSON.parse(savedData));
             console.log('📦 Fallback: Loaded data from localStorage');
           } catch (e) {
-            console.error('Failed to parse saved universe data:', e);
+            console.error('Failed to parse saved simulation data:', e);
           }
         }
 
@@ -126,9 +126,9 @@ export default function PublicMap() {
   // Keep localStorage in sync as backup (but Supabase is primary)
   useEffect(() => {
     if (isHydrated) {
-      localStorage.setItem('universeData', JSON.stringify(universeData));
+      localStorage.setItem('simulationData', JSON.stringify(simulationData));
     }
-  }, [universeData, isHydrated]);
+  }, [simulationData, isHydrated]);
 
   useEffect(() => {
     if (isHydrated) {
@@ -138,7 +138,7 @@ export default function PublicMap() {
 
   // Sync state if a region is selected and data changes
   const activeRegion = selectedRegion
-    ? universeData.find(r => r.id === selectedRegion.id) || null
+    ? simulationData.find(r => r.id === selectedRegion.id) || null
     : null;
 
   const handleLocationSelect = (loc: Location, screenPos: { x: number; y: number }) => {
@@ -181,7 +181,7 @@ export default function PublicMap() {
       <UniverseMap
         onRegionSelect={setSelectedRegion}
         selectedRegion={activeRegion}
-        universeData={universeData}
+        universeData={simulationData}
         baseBackground={config.multiverseBackgroundUrl}
         onLocationSelect={handleLocationSelect}
         onLocationClose={handleLocationClose}
@@ -198,7 +198,7 @@ export default function PublicMap() {
       <CodexPanel
         onEntrySelect={setSelectedCodexEntry}
         selectedEntry={selectedCodexEntry}
-        universeData={universeData}
+        simulationData={simulationData}
       />
     </main>
   );

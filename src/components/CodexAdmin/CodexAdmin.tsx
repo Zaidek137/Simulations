@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import styles from './CodexAdmin.module.css';
-import type { CodexEntry, CodexEntryType, Region } from '@/data/codex-types';
+import type { CodexEntry, CodexEntryType, Simulation } from '@/data/codex-types';
 import { fetchCodexEntries, upsertCodexEntry, deleteCodexEntry } from '@/lib/supabase';
 import { 
   Book, Plus, Trash2, Save, X, Users, Building2, Cpu, Gem, Zap, 
@@ -8,7 +8,7 @@ import {
 } from 'lucide-react';
 
 interface CodexAdminProps {
-  universeData?: Region[];
+  simulationData?: Simulation[];
 }
 
 const CATEGORY_ICONS = {
@@ -27,7 +27,7 @@ const CATEGORY_LABELS = {
   event: 'Event',
 };
 
-export default function CodexAdmin({ universeData = [] }: CodexAdminProps) {
+export default function CodexAdmin({ simulationData = [] }: CodexAdminProps) {
   const [allEntries, setAllEntries] = useState<CodexEntry[]>([]);
   const [editingEntry, setEditingEntry] = useState<CodexEntry | null>(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -215,7 +215,7 @@ export default function CodexAdmin({ universeData = [] }: CodexAdminProps) {
             onCancel={() => {
               setEditingEntry(null);
             }}
-            universeData={universeData}
+            simulationData={simulationData}
             addKnownInfo={addKnownInfo}
             removeKnownInfo={removeKnownInfo}
             updateKnownInfo={updateKnownInfo}
@@ -318,7 +318,7 @@ function EditorPanel({
   onChange,
   onSave,
   onCancel,
-  universeData,
+  simulationData,
   addKnownInfo,
   removeKnownInfo,
   updateKnownInfo,
@@ -331,7 +331,7 @@ function EditorPanel({
   onChange: (entry: CodexEntry) => void;
   onSave: () => void;
   onCancel: () => void;
-  universeData: Region[];
+  simulationData: Simulation[];
   addKnownInfo: () => void;
   removeKnownInfo: (index: number) => void;
   updateKnownInfo: (index: number, field: 'title' | 'content', value: string) => void;
@@ -502,8 +502,8 @@ function EditorPanel({
           <h4 className={styles.sectionTitle}>Map Locations</h4>
           <p className={styles.helpText}>Select locations where this entry appears</p>
           <div className={styles.locationsList}>
-            {universeData.map(universe =>
-              universe.locations.map(location => {
+            {simulationData.map(simulation =>
+              simulation.locations.map(location => {
                 const isSelected = entry.appears_in_locations?.includes(location.id);
                 return (
                   <button
@@ -513,7 +513,7 @@ function EditorPanel({
                   >
                     <div className={styles.locationInfo}>
                       <span className={styles.locationName}>{location.name}</span>
-                      <span className={styles.universeName}>in {universe.name}</span>
+                      <span className={styles.simulationName}>in {simulation.name}</span>
                     </div>
                     {isSelected && <span className={styles.checkmark}>✓</span>}
                   </button>

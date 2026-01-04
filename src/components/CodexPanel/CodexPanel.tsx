@@ -1,17 +1,17 @@
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import styles from './CodexPanel.module.css';
-import type { CodexEntry, CodexEntryType, Region } from '@/data/codex-types';
+import type { CodexEntry, CodexEntryType, Simulation } from '@/data/codex-types';
 import { fetchCodexEntries } from '@/lib/supabase';
 import { X, Book, Users, Building2, Cpu, Gem, Zap, Search, Map, Lock, Info, Heart } from 'lucide-react';
 
 interface CodexPanelProps {
   onEntrySelect: (entry: CodexEntry | null) => void;
   selectedEntry: CodexEntry | null;
-  universeData?: Region[];
+  simulationData?: Simulation[];
 }
 
-type ViewMode = 'categories' | 'universes' | 'detail' | 'universe-categories';
+type ViewMode = 'categories' | 'simulations' | 'detail' | 'simulation-categories';
 
 const CATEGORY_ICONS = {
   character: Users,
@@ -29,14 +29,15 @@ const CATEGORY_LABELS = {
   event: 'Events',
 };
 
-export default function CodexPanel({ onEntrySelect, selectedEntry, universeData = [] }: CodexPanelProps) {
+export default function CodexPanel({ onEntrySelect, selectedEntry, simulationData = [] }: CodexPanelProps) {
   const [isOpen, setIsOpen] = useState(false);
-  const [viewMode, setViewMode] = useState<ViewMode>('universes');
+  const [viewMode, setViewMode] = useState<ViewMode>('simulations');
   const [selectedCategory, setSelectedCategory] = useState<CodexEntryType | null>(null);
-  const [selectedUniverseId, setSelectedUniverseId] = useState<string | null>(null);
+  const [selectedSimulationId, setSelectedSimulationId] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
   const [allEntries, setAllEntries] = useState<CodexEntry[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [glitchActive, setGlitchActive] = useState(false);
 
   // Load codex entries from Supabase
   useEffect(() => {
@@ -52,6 +53,16 @@ export default function CodexPanel({ onEntrySelect, selectedEntry, universeData 
     }
 
     loadCodex();
+  }, []);
+
+  // Glitch effect timer
+  useEffect(() => {
+    const glitchInterval = setInterval(() => {
+      setGlitchActive(true);
+      setTimeout(() => setGlitchActive(false), 300);
+    }, 5000); // Every 5 seconds
+
+    return () => clearInterval(glitchInterval);
   }, []);
 
   // Filter entries
@@ -80,22 +91,22 @@ export default function CodexPanel({ onEntrySelect, selectedEntry, universeData 
 
   const handleBack = () => {
     if (selectedEntry) {
+      // From entry detail -> back to category list
       onEntrySelect(null);
-      if (selectedUniverseId) {
-        setViewMode('universe-categories');
-      } else {
-        setViewMode('categories');
-      }
+      setViewMode('categories');
     } else if (selectedCategory) {
+      // From category list -> back to simulation categories
       setSelectedCategory(null);
-      if (selectedUniverseId) {
-        setViewMode('universe-categories');
+      if (selectedSimulationId) {
+        setViewMode('simulation-categories');
+      } else {
+        // Shouldn't happen in new flow, but fallback to simulations
+        setViewMode('simulations');
       }
-    } else if (viewMode === 'universe-categories') {
-      setViewMode('universes');
-      setSelectedUniverseId(null);
-    } else if (viewMode === 'categories') {
-      setViewMode('universes');
+    } else if (viewMode === 'simulation-categories') {
+      // From simulation categories -> back to simulations list
+      setViewMode('simulations');
+      setSelectedSimulationId(null);
     }
   };
 
@@ -135,12 +146,12 @@ export default function CodexPanel({ onEntrySelect, selectedEntry, universeData 
           {/* Header */}
           <div className={styles.header}>
             <div className={styles.headerLeft}>
-              {(selectedEntry || selectedCategory || viewMode === 'universes') && (
+              {(selectedEntry || selectedCategory || viewMode === 'simulation-categories') && (
                 <button onClick={handleBack} className={styles.backButton}>
                   ← Back
                 </button>
               )}
-              <h1 className={styles.title}>
+              <h1 className={`${styles.title} ${glitchActive ? styles.glitching : ''}`}>
                 <Book className="w-6 h-6" />
                 Codex Database
               </h1>
@@ -150,45 +161,12 @@ export default function CodexPanel({ onEntrySelect, selectedEntry, universeData 
             </button>
           </div>
 
-          {/* Navigation Tabs */}
-          <div className={styles.tabs}>
-            <button
-              className={`${styles.tab} ${viewMode === 'universes' ? styles.tabActive : ''}`}
-              onClick={() => {
-                setViewMode('universes');
-                setSelectedCategory(null);
-                onEntrySelect(null);
-              }}
-            >
-              <Map className="w-4 h-4" />
-              Universes
-            </button>
-            <button
-              className={`${styles.tab} ${viewMode === 'categories' && !selectedCategory ? styles.tabActive : ''}`}
-              onClick={() => {
-                setViewMode('categories');
-                setSelectedCategory(null);
-                onEntrySelect(null);
-              }}
-            >
-              <Book className="w-4 h-4" />
-              Categories
-            </button>
-          </div>
-
-          {/* Search Bar */}
-          {!selectedEntry && (
-            <div className={styles.searchContainer}>
-              <Search className="w-5 h-5 text-gray-400" />
-              <input
-                type="text"
-                className={styles.searchInput}
-                placeholder="Search the codex..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-              />
+          {/* Marquee Banner */}
+          <div className={styles.marquee}>
+            <div className={styles.marqueeContent}>
+              SYSTEM_ALERT: UNAUTHORIZED ACCESS // RELAYING DATA TO THE VOID // [01:00:23:55] // SYSTEM_ALERT: UNAUTHORIZED ACCESS // RELAYING DATA TO THE VOID // [01:00:23:55] // 
             </div>
-          )}
+          </div>
 
           {/* Content */}
           <div className={styles.content}>
@@ -200,21 +178,23 @@ export default function CodexPanel({ onEntrySelect, selectedEntry, universeData 
             ) : selectedEntry ? (
               // Detail View
               <DetailView entry={selectedEntry} />
-            ) : viewMode === 'universes' ? (
-              // Universes View
-              <UniversesView 
-                universeData={universeData} 
+            ) : viewMode === 'simulations' ? (
+              // Simulations View - Entry point, no categories shown yet
+              <SimulationsView 
+                simulationData={simulationData} 
                 allEntries={allEntries}
-                onUniverseSelect={(universeId) => {
-                  setSelectedUniverseId(universeId);
-                  setViewMode('universe-categories');
+                glitchActive={glitchActive}
+                onSimulationSelect={(simulationId) => {
+                  setSelectedSimulationId(simulationId);
+                  setViewMode('simulation-categories');
                 }}
               />
-            ) : viewMode === 'universe-categories' && selectedUniverseId ? (
-              // Categories by Universe
-              <UniverseCategoriesView
-                universe={universeData.find(u => u.id === selectedUniverseId)!}
+            ) : viewMode === 'simulation-categories' && selectedSimulationId ? (
+              // Categories by Simulation - shown after selecting a simulation
+              <SimulationCategoriesView
+                simulation={simulationData.find(s => s.id === selectedSimulationId)!}
                 allEntries={allEntries}
+                glitchActive={glitchActive}
                 onCategoryClick={handleCategoryClick}
               />
             ) : selectedCategory ? (
@@ -222,13 +202,18 @@ export default function CodexPanel({ onEntrySelect, selectedEntry, universeData 
               <CategoryEntriesView 
                 category={selectedCategory}
                 entries={filteredEntries}
+                glitchActive={glitchActive}
                 onEntryClick={handleEntryClick}
               />
             ) : (
-              // Categories Grid
-              <CategoriesGridView 
-                entriesByType={entriesByType}
-                onCategoryClick={handleCategoryClick}
+              // Fallback to simulations view
+              <SimulationsView 
+                simulationData={simulationData} 
+                allEntries={allEntries}
+                onSimulationSelect={(simulationId) => {
+                  setSelectedSimulationId(simulationId);
+                  setViewMode('simulation-categories');
+                }}
               />
             )}
           </div>
@@ -278,10 +263,12 @@ function CategoriesGridView({
 function CategoryEntriesView({
   category,
   entries,
+  glitchActive,
   onEntryClick
 }: {
   category: CodexEntryType;
   entries: CodexEntry[];
+  glitchActive: boolean;
   onEntryClick: (entry: CodexEntry) => void;
 }) {
   const Icon = CATEGORY_ICONS[category];
@@ -290,7 +277,7 @@ function CategoryEntriesView({
     <div className={styles.entriesList}>
       <div className={styles.listHeader}>
         <Icon className="w-6 h-6 text-indigo-400" />
-        <h2>{CATEGORY_LABELS[category]}</h2>
+        <h2 className={glitchActive ? styles.glitching : ''}>{CATEGORY_LABELS[category]}</h2>
         <span className={styles.count}>{entries.length} entries</span>
       </div>
       
@@ -303,7 +290,7 @@ function CategoryEntriesView({
             whileHover={{ scale: 1.02 }}
             whileTap={{ scale: 0.98 }}
           >
-            <h3 className={styles.entryName}>{entry.name}</h3>
+            <h3 className={`${styles.entryName} ${glitchActive ? styles.glitching : ''}`}>{entry.name}</h3>
             {entry.subtitle && (
               <p className={styles.entrySubtitle}>{entry.subtitle}</p>
             )}
@@ -376,67 +363,114 @@ function DetailView({ entry }: { entry: CodexEntry }) {
   );
 }
 
-// Universes View
-function UniversesView({
-  universeData,
+// Simulations View - Entry point, descriptions shown prominently
+function SimulationsView({
+  simulationData,
   allEntries,
-  onUniverseSelect
+  glitchActive,
+  onSimulationSelect
 }: {
-  universeData: Region[];
+  simulationData: Simulation[];
   allEntries: CodexEntry[];
-  onUniverseSelect: (universeId: string) => void;
+  glitchActive: boolean;
+  onSimulationSelect: (simulationId: string) => void;
 }) {
+  const [glitchedText, setGlitchedText] = useState<{[key: string]: string}>({});
+
+  // Random glitch effect on text
+  useEffect(() => {
+    const glitchInterval = setInterval(() => {
+      const shouldGlitch = Math.random() > 0.7;
+      if (shouldGlitch && simulationData.length > 0) {
+        const randomIndex = Math.floor(Math.random() * simulationData.length);
+        const simulation = simulationData[randomIndex];
+        const glitchChars = '!@#$%^&*()_+{}|:<>?~';
+        const originalName = simulation.name;
+        
+        // Create glitched version
+        const glitched = originalName.split('').map((char, i) => 
+          Math.random() > 0.8 ? glitchChars[Math.floor(Math.random() * glitchChars.length)] : char
+        ).join('');
+        
+        setGlitchedText(prev => ({...prev, [simulation.id]: glitched}));
+        
+        // Reset after short time
+        setTimeout(() => {
+          setGlitchedText(prev => {
+            const newState = {...prev};
+            delete newState[simulation.id];
+            return newState;
+          });
+        }, 150);
+      }
+    }, 3000);
+
+    return () => clearInterval(glitchInterval);
+  }, [simulationData]);
+
   return (
-    <div className={styles.universesView}>
-      <div className={styles.universesHeader}>
-        <Map className="w-6 h-6" style={{ color: 'var(--off-white)' }} />
-        <h2>Universe Database</h2>
-        <span className={styles.count}>{universeData.length} universes</span>
+    <div className={styles.simulationsView}>
+      <div className={styles.simulationsHeader}>
+        <Cpu className="w-6 h-6" />
+        <h2 className={glitchActive ? styles.glitching : ''}>Simulations</h2>
+        <span className={styles.count}>{simulationData.length} Available</span>
       </div>
 
-      <div className={styles.universesList}>
-        {universeData.map((universe, index) => {
-          // Find entries related to this universe
+      <div className={styles.simulationsList}>
+        {simulationData.map((simulation, index) => {
+          // Find entries related to this simulation
           const relatedEntries = allEntries.filter(entry =>
             entry.appears_in_locations?.some(locId =>
-              universe.locations?.some(loc => loc.id === locId)
+              simulation.locations?.some(loc => loc.id === locId)
             )
           );
 
+          const displayName = glitchedText[simulation.id] || simulation.name;
+
           return (
-            <div 
-              key={universe.id} 
-              className={styles.universeCard}
-              onClick={() => onUniverseSelect(universe.id)}
-              style={{ cursor: 'pointer' }}
+            <motion.div 
+              key={simulation.id} 
+              className={styles.simulationCard}
+              onClick={() => onSimulationSelect(simulation.id)}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: index * 0.1 }}
             >
-              <div className={styles.universeHeader}>
+              <div className={styles.simulationHeader}>
                 <div 
-                  className={styles.universeIcon}
+                  className={styles.simulationIcon}
                   style={{ 
-                    backgroundImage: `url(${universe.thumbUrl})`,
-                    borderColor: universe.color 
+                    backgroundImage: `url(${simulation.thumbUrl})`,
+                    borderColor: simulation.color 
                   }}
                 />
-                <div className={styles.universeHeaderText}>
-                  <h3 className={styles.universeName}>
-                    {index + 1}. {universe.name}
-                  </h3>
-                  <p className={styles.universeDesc}>{universe.description}</p>
-                  <p className={styles.clickHint}>Click to explore categories →</p>
-                </div>
+              </div>
+
+              <div className={styles.simulationHeaderText}>
+                <h3 className={styles.simulationName}>
+                  {String(index + 1).padStart(2, '0')}. {displayName}
+                </h3>
+              </div>
+
+              {/* Description prominently displayed */}
+              <div className={styles.simulationDescription}>
+                <p>{simulation.description}</p>
               </div>
 
               {/* Summary Stats */}
-              <div className={styles.universeStats}>
+              <div className={styles.simulationStats}>
                 <span className={styles.stat}>
-                  {universe.locations?.length || 0} Locations
+                  {simulation.locations?.length || 0} LOC
                 </span>
                 <span className={styles.stat}>
-                  {relatedEntries.length} Entries
+                  {relatedEntries.length} ENT
                 </span>
               </div>
-            </div>
+
+              <div className={styles.clickHint}>
+                Access →
+              </div>
+            </motion.div>
           );
         })}
       </div>
@@ -444,67 +478,92 @@ function UniversesView({
   );
 }
 
-// Universe Categories View Component
-function UniverseCategoriesView({ universe, allEntries, onCategoryClick }: {
-  universe: Region;
+// Simulation Categories View Component - shown after selecting a simulation
+function SimulationCategoriesView({ simulation, allEntries, glitchActive, onCategoryClick }: {
+  simulation: Simulation;
   allEntries: CodexEntry[];
+  glitchActive: boolean;
   onCategoryClick: (category: CodexEntryType) => void;
 }) {
-  // Filter entries related to this universe
-  const universeEntries = allEntries.filter(entry =>
+  // Filter entries related to this simulation
+  const simulationEntries = allEntries.filter(entry =>
     entry.appears_in_locations?.some(locId =>
-      universe.locations?.some(loc => loc.id === locId)
+      simulation.locations?.some(loc => loc.id === locId)
     )
   );
 
   // Group by category
-  const universeEntriesByType = (Object.keys(CATEGORY_LABELS) as CodexEntryType[]).reduce((acc, type) => {
-    acc[type] = universeEntries.filter(e => e.entry_type === type);
+  const simulationEntriesByType = (Object.keys(CATEGORY_LABELS) as CodexEntryType[]).reduce((acc, type) => {
+    acc[type] = simulationEntries.filter(e => e.entry_type === type);
     return acc;
   }, {} as Record<CodexEntryType, CodexEntry[]>);
 
   return (
     <div className={styles.categoriesView}>
       <div className={styles.categoriesHeader}>
-        <div className={styles.universeHeaderInline}>
+        <div className={styles.simulationHeaderInline}>
           <div 
-            className={styles.universeIconSmall}
+            className={styles.simulationIconSmall}
             style={{ 
-              backgroundImage: `url(${universe.thumbUrl})`,
-              borderColor: universe.color 
+              backgroundImage: `url(${simulation.thumbUrl})`,
+              borderColor: simulation.color 
             }}
           />
           <div>
-            <h2>{universe.name}</h2>
-            <p className={styles.universeDescSmall}>{universe.description}</p>
+            <h2 className={glitchActive ? styles.glitching : ''}>{simulation.name}</h2>
+            <p className={styles.simulationDescSmall}>{simulation.description}</p>
           </div>
         </div>
-        <span className={styles.count}>{universeEntries.length} total entries</span>
+        <span className={styles.count}>{simulationEntries.length} total entries</span>
       </div>
 
+      {/* Left sidebar with categories */}
       <div className={styles.categoriesGrid}>
         {(Object.keys(CATEGORY_LABELS) as CodexEntryType[]).map((category) => {
           const Icon = CATEGORY_ICONS[category];
-          const count = universeEntriesByType[category].length;
+          const count = simulationEntriesByType[category].length;
 
           if (count === 0) return null;
 
           return (
-            <button
+            <motion.button
               key={category}
               className={styles.categoryCard}
               onClick={() => onCategoryClick(category)}
+              whileHover={{ x: 5 }}
+              whileTap={{ scale: 0.98 }}
             >
               <div className={styles.categoryIconWrapper}>
-                <Icon className="w-8 h-8" />
+                <Icon className="w-6 h-6" />
               </div>
               <div className={styles.categoryContent}>
-                <h3 className={styles.categoryName}>{CATEGORY_LABELS[category]}</h3>
-                <p className={styles.categoryCount}>{count} {count === 1 ? 'entry' : 'entries'}</p>
+                <h3 className={`${styles.categoryName} ${glitchActive ? styles.glitching : ''}`}>{CATEGORY_LABELS[category]}</h3>
+                <span className={styles.categoryCount}>{count} ENT</span>
               </div>
-            </button>
+            </motion.button>
           );
         })}
+      </div>
+
+      {/* Right side info panel */}
+      <div className={styles.categoryInfoPanel}>
+        <div className={styles.infoPanelHeader}>
+          <Lock className="w-5 h-5" />
+          <span>SELECT CATEGORY</span>
+        </div>
+        <p className={styles.infoPanelText}>
+          Choose a category from the left panel to view entries for {simulation.name}.
+        </p>
+        <div className={styles.infoPanelStats}>
+          <div className={styles.infoPanelStat}>
+            <span className={styles.statLabel}>LOCATIONS:</span>
+            <span className={styles.statValue}>{simulation.locations?.length || 0}</span>
+          </div>
+          <div className={styles.infoPanelStat}>
+            <span className={styles.statLabel}>TOTAL ENTRIES:</span>
+            <span className={styles.statValue}>{simulationEntries.length}</span>
+          </div>
+        </div>
       </div>
     </div>
   );

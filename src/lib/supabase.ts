@@ -25,7 +25,7 @@ export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
 export interface LoreLocation {
   id: string;
   location_id: string;
-  region_id: string;
+  region_id: string; // DB column name stays as region_id
   name: string;
   description: string;
   cx: number;
@@ -38,9 +38,9 @@ export interface LoreLocation {
   updated_at: string;
 }
 
-export interface LoreRegion {
+export interface LoreSimulation {
   id: string;
-  region_id: string;
+  region_id: string; // DB column name stays as region_id
   name: string;
   description: string;
   color: string;
@@ -55,6 +55,9 @@ export interface LoreRegion {
   updated_at: string;
   locations?: LoreLocation[];
 }
+
+// Legacy alias for backward compatibility
+export type LoreRegion = LoreSimulation;
 
 export interface LoreConfig {
   id: string;
@@ -72,25 +75,25 @@ export interface LoreConfig {
 // =====================================================
 
 /**
- * Fetch all active regions with their locations
+ * Fetch all active simulations with their locations
  */
-export async function fetchRegions(): Promise<LoreRegion[]> {
-  const { data: regions, error: regionsError } = await supabase
+export async function fetchSimulations(): Promise<LoreSimulation[]> {
+  const { data: simulations, error: simulationsError } = await supabase
     .from('lore_regions')
     .select('*')
     .eq('is_active', true)
     .order('sort_order', { ascending: true });
 
-  if (regionsError) {
-    console.error('Error fetching regions:', regionsError);
-    throw regionsError;
+  if (simulationsError) {
+    console.error('Error fetching simulations:', simulationsError);
+    throw simulationsError;
   }
 
-  if (!regions || regions.length === 0) {
+  if (!simulations || simulations.length === 0) {
     return [];
   }
 
-  // Fetch all locations for these regions
+  // Fetch all locations for these simulations
   const { data: locations, error: locationsError } = await supabase
     .from('lore_locations')
     .select('*')
@@ -102,14 +105,17 @@ export async function fetchRegions(): Promise<LoreRegion[]> {
     throw locationsError;
   }
 
-  // Group locations by region
-  const regionsWithLocations = regions.map((region) => ({
-    ...region,
-    locations: locations?.filter((loc) => loc.region_id === region.id) || [],
+  // Group locations by simulation
+  const simulationsWithLocations = simulations.map((simulation) => ({
+    ...simulation,
+    locations: locations?.filter((loc) => loc.region_id === simulation.id) || [],
   }));
 
-  return regionsWithLocations;
+  return simulationsWithLocations;
 }
+
+// Legacy alias for backward compatibility
+export const fetchRegions = fetchSimulations;
 
 /**
  * Fetch lore system configuration
@@ -134,9 +140,9 @@ export async function fetchLoreConfig(): Promise<LoreConfig | null> {
 // =====================================================
 
 /**
- * Upsert a region (admin only)
+ * Upsert a simulation (admin only)
  */
-export async function upsertRegion(region: {
+export async function upsertSimulation(simulation: {
   region_id: string;
   name: string;
   description: string;
@@ -149,25 +155,28 @@ export async function upsertRegion(region: {
   sort_order?: number;
 }): Promise<string> {
   const { data, error } = await supabase.rpc('upsert_lore_region', {
-    p_region_id: region.region_id,
-    p_name: region.name,
-    p_description: region.description,
-    p_color: region.color,
-    p_cx: region.cx,
-    p_cy: region.cy,
-    p_thumb_url: region.thumb_url,
-    p_background_url: region.background_url,
-    p_image_url: region.image_url,
-    p_sort_order: region.sort_order || 0,
+    p_region_id: simulation.region_id,
+    p_name: simulation.name,
+    p_description: simulation.description,
+    p_color: simulation.color,
+    p_cx: simulation.cx,
+    p_cy: simulation.cy,
+    p_thumb_url: simulation.thumb_url,
+    p_background_url: simulation.background_url,
+    p_image_url: simulation.image_url,
+    p_sort_order: simulation.sort_order || 0,
   });
 
   if (error) {
-    console.error('Error upserting region:', error);
+    console.error('Error upserting simulation:', error);
     throw error;
   }
 
   return data;
 }
+
+// Legacy alias for backward compatibility
+export const upsertRegion = upsertSimulation;
 
 /**
  * Upsert a location (admin only)
@@ -223,20 +232,23 @@ export async function updateLoreConfig(
 }
 
 /**
- * Delete a region (admin only - soft delete)
+ * Delete a simulation (admin only - soft delete)
  */
-export async function deleteRegion(regionId: string): Promise<boolean> {
+export async function deleteSimulation(simulationId: string): Promise<boolean> {
   const { data, error } = await supabase.rpc('delete_lore_region', {
-    p_region_id: regionId,
+    p_region_id: simulationId,
   });
 
   if (error) {
-    console.error('Error deleting region:', error);
+    console.error('Error deleting simulation:', error);
     throw error;
   }
 
   return data;
 }
+
+// Legacy alias for backward compatibility
+export const deleteRegion = deleteSimulation;
 
 /**
  * Delete a location (admin only - soft delete)
@@ -259,11 +271,11 @@ export async function deleteLocation(locationId: string): Promise<boolean> {
 // =====================================================
 
 /**
- * Bulk upsert regions and locations (admin only)
+ * Bulk upsert simulations and locations (admin only)
  * Useful for importing data from the old localStorage system
  */
 export async function bulkUpsertData(
-  regions: Array<{
+  simulations: Array<{
     region_id: string;
     name: string;
     description: string;
@@ -285,25 +297,25 @@ export async function bulkUpsertData(
   }>
 ): Promise<void> {
   try {
-    // Upsert regions first
-    for (const region of regions) {
-      await upsertRegion({
-        region_id: region.region_id,
-        name: region.name,
-        description: region.description,
-        color: region.color,
-        cx: region.cx,
-        cy: region.cy,
-        thumb_url: region.thumb_url,
-        background_url: region.background_url,
-        image_url: region.image_url,
+    // Upsert simulations first
+    for (const simulation of simulations) {
+      await upsertSimulation({
+        region_id: simulation.region_id,
+        name: simulation.name,
+        description: simulation.description,
+        color: simulation.color,
+        cx: simulation.cx,
+        cy: simulation.cy,
+        thumb_url: simulation.thumb_url,
+        background_url: simulation.background_url,
+        image_url: simulation.image_url,
       });
 
-      // Then upsert locations for this region
-      for (const location of region.locations) {
+      // Then upsert locations for this simulation
+      for (const location of simulation.locations) {
         await upsertLocation({
           location_id: location.location_id,
-          region_id: region.region_id,
+          region_id: simulation.region_id,
           name: location.name,
           description: location.description,
           cx: location.cx,

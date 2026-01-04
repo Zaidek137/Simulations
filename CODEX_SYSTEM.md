@@ -2,14 +2,15 @@
 
 ## Overview
 
-The Codex System is a comprehensive lore database for the Scavenjer Universe interactive map. It provides both a beautiful public-facing interface for exploring lore entries and a powerful admin interface for managing content.
+The Codex System is a comprehensive lore database for the Scavenjer Simulations interactive map. It provides both a beautiful public-facing interface with Neobrutalism game design aesthetics for exploring lore entries and a powerful admin interface for managing content.
 
 ## Features
 
 ### Public Codex Panel
-- **Full-Screen Overlay**: Beautiful, modern UI that overlays the map
+- **Full-Screen Overlay**: Bold Neobrutalism UI with thick borders and hard shadows
+- **Simulations-First Navigation**: Users select a simulation before viewing categories
 - **Category Navigation**: Browse entries by type (Characters, Factions, Simulations, Artifacts, Events)
-- **Universe View**: See all universes organized with their locations and related codex entries
+- **Simulations View**: See all simulations with prominent descriptions displayed before selection
 - **Search**: Quick search across all codex entries
 - **Rich Entry Details**:
   - Known Information sections
@@ -32,11 +33,12 @@ The Codex System is a comprehensive lore database for the Scavenjer Universe int
 
 ### For Public Users
 
-1. Click the **book icon (📖)** in the top-right corner to open the Codex
-2. Use the **Categories** tab to browse by entry type
-3. Use the **Universes** tab to explore lore organized by universe/simulation
-4. Click any entry to view full details
-5. Use the search bar to quickly find specific entries
+1. Click the **yellow book icon** in the top-right corner to open the Codex
+2. **Select a Simulation** from the list - descriptions are prominently displayed
+3. After selecting a simulation, **browse categories** available for that simulation
+4. Click any entry to view full details with Neobrutalism styling
+5. Use the **breadcrumb back button** to navigate: Entry → Category → Simulation → Simulations List
+6. Use the search bar to quickly find specific entries
 
 ### For Admins
 
