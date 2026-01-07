@@ -279,7 +279,7 @@ export default function AdminPage() {
           />
         ) : (
           <div className="h-full p-6">
-            <CodexAdmin universeData={universeData} />
+            <CodexAdmin simulationData={universeData} />
           </div>
         )}
       </div>

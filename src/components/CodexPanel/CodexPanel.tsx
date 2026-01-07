@@ -3,7 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import styles from './CodexPanel.module.css';
 import type { CodexEntry, CodexEntryType, Simulation } from '@/data/codex-types';
 import { fetchCodexEntries } from '@/lib/supabase';
-import { X, Book, Users, Building2, Cpu, Gem, Zap, Search, Map, Lock, Info, Heart } from 'lucide-react';
+import { X, Book, Users, Building2, Cpu, Gem, Zap, Lock, Info, Heart } from 'lucide-react';
 
 interface CodexPanelProps {
   onEntrySelect: (entry: CodexEntry | null) => void;
@@ -34,7 +34,6 @@ export default function CodexPanel({ onEntrySelect, selectedEntry, simulationDat
   const [viewMode, setViewMode] = useState<ViewMode>('simulations');
   const [selectedCategory, setSelectedCategory] = useState<CodexEntryType | null>(null);
   const [selectedSimulationId, setSelectedSimulationId] = useState<string | null>(null);
-  const [searchQuery, setSearchQuery] = useState('');
   const [allEntries, setAllEntries] = useState<CodexEntry[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [glitchActive, setGlitchActive] = useState(false);
@@ -65,24 +64,11 @@ export default function CodexPanel({ onEntrySelect, selectedEntry, simulationDat
     return () => clearInterval(glitchInterval);
   }, []);
 
-  // Filter entries
+  // Filter entries by category
   const filteredEntries = allEntries.filter(entry => {
     const matchesCategory = !selectedCategory || entry.entry_type === selectedCategory;
-    const matchesSearch = searchQuery === '' || 
-      entry.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      (entry.summary || '').toLowerCase().includes(searchQuery.toLowerCase());
-    
-    return matchesCategory && matchesSearch;
+    return matchesCategory;
   });
-
-  // Group entries by type
-  const entriesByType = allEntries.reduce((acc, entry) => {
-    if (!acc[entry.entry_type]) {
-      acc[entry.entry_type] = [];
-    }
-    acc[entry.entry_type].push(entry);
-    return acc;
-  }, {} as Record<CodexEntryType, CodexEntry[]>);
 
   const handleCategoryClick = (type: CodexEntryType) => {
     setSelectedCategory(type);
@@ -210,6 +196,7 @@ export default function CodexPanel({ onEntrySelect, selectedEntry, simulationDat
               <SimulationsView 
                 simulationData={simulationData} 
                 allEntries={allEntries}
+                glitchActive={glitchActive}
                 onSimulationSelect={(simulationId) => {
                   setSelectedSimulationId(simulationId);
                   setViewMode('simulation-categories');
@@ -220,42 +207,6 @@ export default function CodexPanel({ onEntrySelect, selectedEntry, simulationDat
         </motion.div>
       </motion.div>
     </AnimatePresence>
-  );
-}
-
-// Categories Grid View
-function CategoriesGridView({ 
-  entriesByType, 
-  onCategoryClick 
-}: { 
-  entriesByType: Record<CodexEntryType, CodexEntry[]>; 
-  onCategoryClick: (type: CodexEntryType) => void;
-}) {
-  return (
-    <div className={styles.categoriesGrid}>
-      {Object.entries(CATEGORY_ICONS).map(([type, Icon]) => {
-        const entries = entriesByType[type as CodexEntryType] || [];
-        return (
-          <motion.button
-            key={type}
-            className={styles.categoryCard}
-            onClick={() => onCategoryClick(type as CodexEntryType)}
-            whileHover={{ scale: 1.02 }}
-            whileTap={{ scale: 0.98 }}
-          >
-            <div className={styles.categoryIcon}>
-              <Icon className="w-8 h-8" />
-            </div>
-            <h3 className={styles.categoryTitle}>
-              {CATEGORY_LABELS[type as CodexEntryType]}
-            </h3>
-            <p className={styles.categoryCount}>
-              {entries.length} {entries.length === 1 ? 'entry' : 'entries'}
-            </p>
-          </motion.button>
-        );
-      })}
-    </div>
   );
 }
 
@@ -388,7 +339,7 @@ function SimulationsView({
         const originalName = simulation.name;
         
         // Create glitched version
-        const glitched = originalName.split('').map((char, i) => 
+        const glitched = originalName.split('').map((char) => 
           Math.random() > 0.8 ? glitchChars[Math.floor(Math.random() * glitchChars.length)] : char
         ).join('');
         
