@@ -1,0 +1,205 @@
+/* ====================================
+   FILTER BAR - NEOBRUTALISM DESIGN
+   ==================================== */
+
+.filterBar {
+  background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+  border: 6px solid var(--neo-black, #000000);
+  box-shadow: 8px 8px 0 var(--neo-black, #000000);
+  margin-bottom: 24px;
+  overflow: hidden;
+}
+
+.filterHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 20px;
+  background: var(--neo-cyan, #00d4ff);
+  border-bottom: 4px solid var(--neo-black, #000000);
+}
+
+.filterToggle {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: transparent;
+  border: none;
+  color: var(--neo-black, #000000);
+  font-weight: 900;
+  font-size: 16px;
+  font-family: 'Courier New', monospace;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.filterToggle:hover {
+  transform: translateX(4px);
+}
+
+.filterCount {
+  background: var(--neo-magenta, #ff006e);
+  color: var(--neo-white, #ffffff);
+  padding: 4px 10px;
+  border-radius: 2px;
+  font-size: 12px;
+  font-weight: 900;
+  border: 2px solid var(--neo-black, #000000);
+}
+
+.chevron {
+  transition: transform 0.3s ease;
+}
+
+.chevronOpen {
+  transform: rotate(180deg);
+}
+
+.clearButton {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: var(--neo-white, #ffffff);
+  border: 3px solid var(--neo-black, #000000);
+  color: var(--neo-black, #000000);
+  padding: 8px 14px;
+  font-weight: 900;
+  font-size: 13px;
+  font-family: 'Courier New', monospace;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 4px 4px 0 var(--neo-black, #000000);
+}
+
+.clearButton:hover {
+  transform: translate(-2px, -2px);
+  box-shadow: 6px 6px 0 var(--neo-black, #000000);
+  background: var(--neo-magenta, #ff006e);
+  color: var(--neo-white, #ffffff);
+}
+
+.clearButton:active {
+  transform: translate(0, 0);
+  box-shadow: 2px 2px 0 var(--neo-black, #000000);
+}
+
+.filterContent {
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  overflow: hidden;
+}
+
+.filterGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.filterLabel {
+  font-weight: 900;
+  font-size: 13px;
+  font-family: 'Courier New', monospace;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--neo-black, #000000);
+}
+
+.filterSelect {
+  background: var(--neo-white, #ffffff);
+  border: 4px solid var(--neo-black, #000000);
+  padding: 12px 16px;
+  font-size: 14px;
+  font-weight: 700;
+  font-family: 'Courier New', monospace;
+  color: var(--neo-black, #000000);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 4px 4px 0 var(--neo-black, #000000);
+}
+
+.filterSelect:hover {
+  transform: translate(-2px, -2px);
+  box-shadow: 6px 6px 0 var(--neo-black, #000000);
+}
+
+.filterSelect:focus {
+  outline: none;
+  border-color: var(--neo-cyan, #00d4ff);
+}
+
+.chipContainer {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.filterChip {
+  background: var(--neo-white, #ffffff);
+  border: 3px solid var(--neo-black, #000000);
+  color: var(--neo-black, #000000);
+  padding: 8px 16px;
+  font-weight: 900;
+  font-size: 12px;
+  font-family: 'Courier New', monospace;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 3px 3px 0 var(--neo-black, #000000);
+}
+
+.filterChip:hover {
+  transform: translate(-2px, -2px);
+  box-shadow: 5px 5px 0 var(--neo-black, #000000);
+  background: var(--neo-cyan, #00d4ff);
+}
+
+.filterChip:active {
+  transform: translate(0, 0);
+  box-shadow: 2px 2px 0 var(--neo-black, #000000);
+}
+
+.filterChipActive {
+  background: var(--neo-gold, #FFD700);
+  border-color: var(--neo-black, #000000);
+  color: var(--neo-black, #000000);
+  box-shadow: 3px 3px 0 var(--neo-black, #000000), inset 2px 2px 0 rgba(0, 0, 0, 0.2);
+}
+
+.filterChipActive:hover {
+  background: var(--neo-magenta, #ff006e);
+  color: var(--neo-white, #ffffff);
+}
+
+/* Mobile Responsiveness */
+@media (max-width: 768px) {
+  .filterHeader {
+    padding: 12px 16px;
+  }
+
+  .filterToggle {
+    font-size: 14px;
+    gap: 8px;
+  }
+
+  .filterContent {
+    padding: 16px;
+    gap: 16px;
+  }
+
+  .clearButton {
+    padding: 6px 10px;
+    font-size: 11px;
+  }
+
+  .filterChip {
+    font-size: 11px;
+    padding: 6px 12px;
+  }
+}
+

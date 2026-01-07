@@ -1,0 +1,355 @@
+/* ====================================
+   TIMELINE VIEW - NEOBRUTALISM
+   ==================================== */
+
+.timelineContainer {
+  background: linear-gradient(135deg, #0D1B2A 0%, #1a2f42 100%);
+  border: 6px solid var(--neo-black, #000000);
+  box-shadow: 8px 8px 0 var(--neo-black, #000000);
+  padding: 24px;
+  min-height: 400px;
+}
+
+.timelineHeader {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 32px;
+  padding-bottom: 16px;
+  border-bottom: 4px solid var(--neo-gold, #FFD700);
+}
+
+.timelineHeader h2 {
+  font-weight: 900;
+  font-size: 24px;
+  font-family: 'Courier New', monospace;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--neo-white, #ffffff);
+  margin: 0;
+  flex: 1;
+}
+
+.timelineHeader svg {
+  color: var(--neo-cyan, #00d4ff);
+}
+
+.eventCount {
+  background: var(--neo-gold, #FFD700);
+  color: var(--neo-black, #000000);
+  padding: 6px 12px;
+  border-radius: 2px;
+  font-size: 13px;
+  font-weight: 900;
+  border: 3px solid var(--neo-black, #000000);
+}
+
+.timelineContent {
+  display: flex;
+  flex-direction: column;
+  gap: 40px;
+}
+
+.emptyState {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  padding: 60px 20px;
+  color: var(--neo-white, #ffffff);
+  font-weight: 700;
+  font-family: 'Courier New', monospace;
+}
+
+.eraSection {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.eraMarker {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.eraLine {
+  flex: 1;
+  height: 3px;
+  background: var(--neo-magenta, #ff006e);
+}
+
+.eraLabel {
+  background: var(--neo-magenta, #ff006e);
+  color: var(--neo-white, #ffffff);
+  padding: 8px 20px;
+  font-weight: 900;
+  font-size: 14px;
+  font-family: 'Courier New', monospace;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  border: 4px solid var(--neo-black, #000000);
+  box-shadow: 4px 4px 0 var(--neo-black, #000000);
+  white-space: nowrap;
+}
+
+.eventsGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 20px;
+}
+
+.eventCard {
+  background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+  border: 4px solid var(--neo-black, #000000);
+  box-shadow: 6px 6px 0 var(--neo-black, #000000);
+  overflow: hidden;
+  transition: all 0.3s ease;
+}
+
+.eventCard:hover {
+  transform: translate(-3px, -3px);
+  box-shadow: 9px 9px 0 var(--neo-black, #000000);
+}
+
+.eventHeader {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px;
+  background: var(--neo-cyan, #00d4ff);
+  border: none;
+  border-bottom: 3px solid var(--neo-black, #000000);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.eventHeader:hover {
+  background: var(--neo-gold, #FFD700);
+}
+
+.eventMainInfo {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex: 1;
+}
+
+.eventIndicator {
+  width: 12px;
+  height: 48px;
+  border: 3px solid var(--neo-black, #000000);
+  flex-shrink: 0;
+}
+
+.eventTitleSection {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  align-items: flex-start;
+  flex: 1;
+  min-width: 0;
+}
+
+.eventName {
+  font-weight: 900;
+  font-size: 15px;
+  font-family: 'Courier New', monospace;
+  text-transform: uppercase;
+  color: var(--neo-black, #000000);
+  margin: 0;
+  text-align: left;
+}
+
+.eventDate {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--neo-black, #000000);
+  opacity: 0.7;
+}
+
+.expandIcon {
+  width: 20px;
+  height: 20px;
+  color: var(--neo-black, #000000);
+  transition: transform 0.3s ease;
+  flex-shrink: 0;
+}
+
+.expandIconOpen {
+  transform: rotate(180deg);
+}
+
+.eventDetails {
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  background: var(--neo-white, #ffffff);
+  overflow: hidden;
+}
+
+.eventSummary {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--neo-black, #000000);
+  line-height: 1.6;
+  margin: 0;
+}
+
+.eventMeta {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  font-size: 13px;
+  color: var(--neo-black, #000000);
+}
+
+.eventMeta svg {
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+.metaLabel {
+  font-weight: 900;
+  font-family: 'Courier New', monospace;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.metaValue {
+  font-weight: 600;
+}
+
+.participantChips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  flex: 1;
+}
+
+.participantChip {
+  background: var(--neo-cyan, #00d4ff);
+  border: 2px solid var(--neo-black, #000000);
+  color: var(--neo-black, #000000);
+  padding: 4px 10px;
+  font-size: 11px;
+  font-weight: 900;
+  font-family: 'Courier New', monospace;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.participantChip:hover {
+  background: var(--neo-gold, #FFD700);
+  transform: translateY(-2px);
+}
+
+.consequencesSection {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.consequencesTitle {
+  font-weight: 900;
+  font-size: 13px;
+  font-family: 'Courier New', monospace;
+  text-transform: uppercase;
+  color: var(--neo-black, #000000);
+  margin: 0;
+}
+
+.consequencesList {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.consequenceItem {
+  padding: 8px 12px;
+  background: var(--neo-gold, #FFD700);
+  border: 2px solid var(--neo-black, #000000);
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--neo-black, #000000);
+  position: relative;
+  padding-left: 24px;
+}
+
+.consequenceItem::before {
+  content: '→';
+  position: absolute;
+  left: 8px;
+  font-weight: 900;
+}
+
+.viewFullButton {
+  background: var(--neo-magenta, #ff006e);
+  color: var(--neo-white, #ffffff);
+  border: 3px solid var(--neo-black, #000000);
+  padding: 10px 16px;
+  font-weight: 900;
+  font-size: 13px;
+  font-family: 'Courier New', monospace;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 4px 4px 0 var(--neo-black, #000000);
+  margin-top: 8px;
+}
+
+.viewFullButton:hover {
+  transform: translate(-2px, -2px);
+  box-shadow: 6px 6px 0 var(--neo-black, #000000);
+  background: var(--neo-cyan, #00d4ff);
+  color: var(--neo-black, #000000);
+}
+
+.viewFullButton:active {
+  transform: translate(0, 0);
+  box-shadow: 3px 3px 0 var(--neo-black, #000000);
+}
+
+/* Mobile Responsiveness */
+@media (max-width: 768px) {
+  .timelineContainer {
+    padding: 16px;
+  }
+
+  .timelineHeader {
+    margin-bottom: 24px;
+  }
+
+  .timelineHeader h2 {
+    font-size: 20px;
+  }
+
+  .eventsGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .eventHeader {
+    padding: 12px;
+  }
+
+  .eventName {
+    font-size: 13px;
+  }
+
+  .eventDetails {
+    padding: 12px;
+  }
+
+  .eraLabel {
+    font-size: 12px;
+    padding: 6px 14px;
+  }
+}
+

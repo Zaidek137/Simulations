@@ -4,6 +4,10 @@ import styles from './CodexPanel.module.css';
 import type { CodexEntry, CodexEntryType, Simulation } from '@/data/codex-types';
 import { fetchCodexEntries } from '@/lib/supabase';
 import { X, Book, Users, Building2, Cpu, Gem, Zap, Lock, Info, Heart } from 'lucide-react';
+// TODO: Integrate these components in full implementation
+// import FilterBar from '../FilterBar/FilterBar';
+// import BreadcrumbNavigation from '../BreadcrumbNavigation/BreadcrumbNavigation';
+// import RelationshipsPanel from '../RelationshipsPanel/RelationshipsPanel';
 
 interface CodexPanelProps {
   onEntrySelect: (entry: CodexEntry | null) => void;
@@ -37,6 +41,9 @@ export default function CodexPanel({ onEntrySelect, selectedEntry, simulationDat
   const [allEntries, setAllEntries] = useState<CodexEntry[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [glitchActive, setGlitchActive] = useState(false);
+  // TODO: Uncomment when integrating FilterBar and BreadcrumbNavigation
+  // const [filters, setFilters] = useState<CodexFilters>({});
+  // const [breadcrumbs, setBreadcrumbs] = useState<BreadcrumbItem[]>([]);
 
   // Load codex entries from Supabase
   useEffect(() => {

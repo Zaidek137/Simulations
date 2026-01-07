@@ -458,6 +458,273 @@ export async function deleteCodexEntry(entryId: string): Promise<boolean> {
   return data;
 }
 
+/**
+ * Fetch entry with full relationships
+ */
+export async function fetchCodexEntryWithRelations(entryId: string): Promise<any> {
+  // Fetch the entry
+  const { data: entry, error: entryError } = await supabase
+    .from('lore_codex_entries')
+    .select('*')
+    .eq('entry_id', entryId)
+    .eq('is_active', true)
+    .single();
+
+  if (entryError) {
+    console.error(`Error fetching entry ${entryId}:`, entryError);
+    throw entryError;
+  }
+
+  // Fetch relationships
+  const { data: relationships, error: relError } = await supabase
+    .rpc('get_entry_relationships', { p_entry_id: entryId });
+
+  if (relError) {
+    console.error(`Error fetching relationships for ${entryId}:`, relError);
+  }
+
+  return {
+    ...entry,
+    related_entries: relationships || []
+  };
+}
+
+/**
+ * Fetch entries with advanced filtering
+ */
+export async function fetchCodexEntriesFiltered(filters: any): Promise<any[]> {
+  const { data, error } = await supabase.rpc('get_entries_by_filters', {
+    p_filters: filters
+  });
+
+  if (error) {
+    console.error('Error fetching filtered entries:', error);
+    throw error;
+  }
+
+  return data || [];
+}
+
+/**
+ * Fetch relationships for an entry
+ */
+export async function fetchEntryRelationships(entryId: string): Promise<any[]> {
+  const { data, error } = await supabase.rpc('get_entry_relationships', {
+    p_entry_id: entryId
+  });
+
+  if (error) {
+    console.error(`Error fetching relationships for ${entryId}:`, error);
+    throw error;
+  }
+
+  return data || [];
+}
+
+/**
+ * Fetch enhanced location data
+ */
+export async function fetchLocationEnhanced(locationId: string): Promise<any> {
+  // Fetch base location
+  const { data: location, error: locError } = await supabase
+    .from('lore_locations')
+    .select('*')
+    .eq('location_id', locationId)
+    .eq('is_active', true)
+    .single();
+
+  if (locError) {
+    console.error(`Error fetching location ${locationId}:`, locError);
+    throw locError;
+  }
+
+  // Fetch inhabitants
+  const { data: inhabitants, error: inhError } = await supabase
+    .rpc('get_location_inhabitants', { p_location_id: locationId });
+
+  if (inhError) {
+    console.error(`Error fetching inhabitants for ${locationId}:`, inhError);
+  }
+
+  return {
+    ...location,
+    ...inhabitants
+  };
+}
+
+/**
+ * Fetch all entries at a location (characters, factions, artifacts)
+ */
+export async function fetchLocationInhabitants(locationId: string): Promise<any> {
+  const { data, error } = await supabase.rpc('get_location_inhabitants', {
+    p_location_id: locationId
+  });
+
+  if (error) {
+    console.error(`Error fetching location inhabitants for ${locationId}:`, error);
+    return { characters: [], factions: [], artifacts: [] };
+  }
+
+  return data || { characters: [], factions: [], artifacts: [] };
+}
+
+/**
+ * Fetch events at a location
+ */
+export async function fetchLocationEvents(locationId: string): Promise<any[]> {
+  const { data, error } = await supabase.rpc('get_location_events', {
+    p_location_id: locationId
+  });
+
+  if (error) {
+    console.error(`Error fetching events at location ${locationId}:`, error);
+    return [];
+  }
+
+  return data || [];
+}
+
+/**
+ * Upsert with new metadata fields (enhanced version)
+ */
+export async function upsertCodexEntryEnhanced(entry: any): Promise<string> {
+  const { data, error } = await supabase.rpc('upsert_codex_entry', {
+    p_entry_id: entry.entry_id,
+    p_entry_type: entry.entry_type,
+    p_name: entry.name,
+    p_subtitle: entry.subtitle || null,
+    p_summary: entry.summary,
+    p_known_info: entry.known_info || [],
+    p_locked_sections: entry.locked_sections || [],
+    p_icon_url: entry.icon_url || null,
+    p_image_url: entry.image_url || null,
+    p_color: entry.color || '#6366f1',
+    p_primary_location_id: entry.primary_location_id || null,
+    p_appears_in_locations: entry.appears_in_locations || [],
+    p_is_unlocked: entry.is_unlocked !== false,
+    p_unlock_condition: entry.unlock_condition || null,
+    p_sort_order: entry.sort_order || 0,
+    // Character metadata
+    p_character_role: entry.character_role || null,
+    p_character_status: entry.character_status || null,
+    p_character_affiliations: entry.character_affiliations || [],
+    p_importance_tier: entry.importance_tier || 2,
+    p_character_tags: entry.character_tags || [],
+    p_timeline_era: entry.timeline_era || null,
+    // Event metadata
+    p_event_date: entry.event_date || null,
+    p_event_participants: entry.event_participants || [],
+    p_event_consequences: entry.event_consequences || []
+  });
+
+  if (error) {
+    console.error('Error upserting enhanced codex entry:', error);
+    throw error;
+  }
+
+  return data;
+}
+
+/**
+ * Upsert a relationship between entries
+ */
+export async function upsertRelationship(relationship: {
+  from_entry_id: string;
+  to_entry_id: string;
+  relationship_type: string;
+  strength?: number;
+  description?: string;
+  is_bidirectional?: boolean;
+  display_label?: string;
+}): Promise<string> {
+  const { data, error } = await supabase.rpc('upsert_relationship', {
+    p_from_entry_id: relationship.from_entry_id,
+    p_to_entry_id: relationship.to_entry_id,
+    p_relationship_type: relationship.relationship_type,
+    p_strength: relationship.strength || 5,
+    p_description: relationship.description || null,
+    p_is_bidirectional: relationship.is_bidirectional || false,
+    p_display_label: relationship.display_label || null
+  });
+
+  if (error) {
+    console.error('Error upserting relationship:', error);
+    throw error;
+  }
+
+  return data;
+}
+
+/**
+ * Delete a relationship
+ */
+export async function deleteRelationship(
+  from_entry_id: string,
+  to_entry_id: string,
+  relationship_type: string
+): Promise<boolean> {
+  const { data, error } = await supabase.rpc('delete_relationship', {
+    p_from_entry_id: from_entry_id,
+    p_to_entry_id: to_entry_id,
+    p_relationship_type: relationship_type
+  });
+
+  if (error) {
+    console.error('Error deleting relationship:', error);
+    throw error;
+  }
+
+  return data;
+}
+
+/**
+ * Upsert location faction presence
+ */
+export async function upsertLocationFaction(
+  location_id: string,
+  faction_entry_id: string,
+  control_level: 'dominant' | 'present' | 'minor',
+  description?: string
+): Promise<string> {
+  const { data, error } = await supabase.rpc('upsert_location_faction', {
+    p_location_id: location_id,
+    p_faction_entry_id: faction_entry_id,
+    p_control_level: control_level,
+    p_description: description || null
+  });
+
+  if (error) {
+    console.error('Error upserting location faction:', error);
+    throw error;
+  }
+
+  return data;
+}
+
+/**
+ * Upsert location character presence
+ */
+export async function upsertLocationCharacter(
+  location_id: string,
+  character_entry_id: string,
+  stationed: boolean,
+  description?: string
+): Promise<string> {
+  const { data, error } = await supabase.rpc('upsert_location_character', {
+    p_location_id: location_id,
+    p_character_entry_id: character_entry_id,
+    p_stationed: stationed,
+    p_description: description || null
+  });
+
+  if (error) {
+    console.error('Error upserting location character:', error);
+    throw error;
+  }
+
+  return data;
+}
+
 // =====================================================
 // AUTHENTICATION HELPERS
 // =====================================================

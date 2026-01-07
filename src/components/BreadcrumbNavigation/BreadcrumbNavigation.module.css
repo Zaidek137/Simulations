@@ -1,0 +1,104 @@
+/* ====================================
+   BREADCRUMB NAVIGATION - NEOBRUTALISM
+   ==================================== */
+
+.breadcrumbNav {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 16px;
+  background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+  border: 4px solid var(--neo-black, #000000);
+  box-shadow: 6px 6px 0 var(--neo-black, #000000);
+  margin-bottom: 20px;
+  overflow-x: auto;
+  scrollbar-width: thin;
+}
+
+.breadcrumbNav::-webkit-scrollbar {
+  height: 6px;
+}
+
+.breadcrumbNav::-webkit-scrollbar-track {
+  background: var(--neo-white, #ffffff);
+  border: 2px solid var(--neo-black, #000000);
+}
+
+.breadcrumbNav::-webkit-scrollbar-thumb {
+  background: var(--neo-cyan, #00d4ff);
+  border: 2px solid var(--neo-black, #000000);
+}
+
+.breadcrumbSegment {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.separator {
+  color: var(--neo-black, #000000);
+  opacity: 0.6;
+  flex-shrink: 0;
+}
+
+.breadcrumbItem {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: var(--neo-white, #ffffff);
+  border: 3px solid var(--neo-black, #000000);
+  color: var(--neo-black, #000000);
+  padding: 6px 12px;
+  font-weight: 900;
+  font-size: 12px;
+  font-family: 'Courier New', monospace;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 3px 3px 0 var(--neo-black, #000000);
+  white-space: nowrap;
+}
+
+.breadcrumbItem:hover {
+  transform: translate(-2px, -2px);
+  box-shadow: 5px 5px 0 var(--neo-black, #000000);
+  background: var(--neo-cyan, #00d4ff);
+}
+
+.breadcrumbItem:active {
+  transform: translate(0, 0);
+  box-shadow: 2px 2px 0 var(--neo-black, #000000);
+}
+
+.breadcrumbCurrent {
+  background: var(--neo-gold, #FFD700);
+  cursor: default;
+  pointer-events: none;
+  box-shadow: 3px 3px 0 var(--neo-black, #000000), inset 2px 2px 0 rgba(0, 0, 0, 0.2);
+}
+
+.breadcrumbCurrent:hover {
+  transform: none;
+  box-shadow: 3px 3px 0 var(--neo-black, #000000), inset 2px 2px 0 rgba(0, 0, 0, 0.2);
+  background: var(--neo-gold, #FFD700);
+}
+
+/* Mobile Responsiveness */
+@media (max-width: 768px) {
+  .breadcrumbNav {
+    padding: 10px 12px;
+    gap: 6px;
+  }
+
+  .breadcrumbItem {
+    font-size: 11px;
+    padding: 5px 10px;
+  }
+
+  .separator {
+    width: 12px;
+    height: 12px;
+  }
+}
+

@@ -1,0 +1,187 @@
+/* ====================================
+   CONTEXTUAL CARD - NEOBRUTALISM
+   ==================================== */
+
+.contextualCard {
+  width: 320px;
+  background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+  border: 4px solid var(--neo-black, #000000);
+  box-shadow: 8px 8px 0 var(--neo-black, #000000);
+  z-index: 9999;
+  pointer-events: all;
+  overflow: hidden;
+}
+
+.cardAccent {
+  height: 8px;
+  width: 100%;
+}
+
+.cardIcon {
+  width: 60px;
+  height: 60px;
+  margin: -30px auto 0;
+  border: 4px solid var(--neo-black, #000000);
+  background: var(--neo-white, #ffffff);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+.cardIcon img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.cardContent {
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.cardTitle {
+  font-weight: 900;
+  font-size: 16px;
+  font-family: 'Courier New', monospace;
+  text-transform: uppercase;
+  color: var(--neo-black, #000000);
+  margin: 0;
+  line-height: 1.2;
+}
+
+.cardSubtitle {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--neo-black, #000000);
+  opacity: 0.7;
+  margin: 0;
+  line-height: 1.3;
+}
+
+.cardSummary {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--neo-black, #000000);
+  line-height: 1.5;
+  margin: 0;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.cardMeta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 4px;
+}
+
+.cardType,
+.cardRole,
+.cardStatus {
+  font-size: 11px;
+  font-weight: 900;
+  font-family: 'Courier New', monospace;
+  text-transform: uppercase;
+  padding: 4px 10px;
+  border: 2px solid var(--neo-black, #000000);
+}
+
+.cardType {
+  background: var(--neo-cyan, #00d4ff);
+  color: var(--neo-black, #000000);
+}
+
+.cardRole {
+  background: var(--neo-white, #ffffff);
+  color: var(--neo-black, #000000);
+}
+
+.cardStatus {
+  border-width: 2px;
+}
+
+.statusActive {
+  background: var(--neo-cyan, #00d4ff);
+  color: var(--neo-black, #000000);
+}
+
+.statusDeceased {
+  background: var(--neo-black, #000000);
+  color: var(--neo-white, #ffffff);
+}
+
+.statusMissing {
+  background: var(--neo-magenta, #ff006e);
+  color: var(--neo-white, #ffffff);
+}
+
+.statusUnknown {
+  background: var(--neo-white, #ffffff);
+  color: var(--neo-black, #000000);
+}
+
+.viewFullButton {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+  background: var(--neo-gold, #FFD700);
+  border: 3px solid var(--neo-black, #000000);
+  color: var(--neo-black, #000000);
+  padding: 10px 16px;
+  font-weight: 900;
+  font-size: 12px;
+  font-family: 'Courier New', monospace;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 4px 4px 0 var(--neo-black, #000000);
+  margin-top: 8px;
+}
+
+.viewFullButton:hover {
+  transform: translate(-2px, -2px);
+  box-shadow: 6px 6px 0 var(--neo-black, #000000);
+  background: var(--neo-magenta, #ff006e);
+  color: var(--neo-white, #ffffff);
+}
+
+.viewFullButton:active {
+  transform: translate(0, 0);
+  box-shadow: 3px 3px 0 var(--neo-black, #000000);
+}
+
+.loading {
+  padding: 40px 20px;
+  text-align: center;
+  font-weight: 700;
+  font-family: 'Courier New', monospace;
+  color: var(--neo-black, #000000);
+}
+
+/* Mobile Adjustments */
+@media (max-width: 768px) {
+  .contextualCard {
+    width: 280px;
+  }
+
+  .cardContent {
+    padding: 16px;
+    gap: 10px;
+  }
+
+  .cardTitle {
+    font-size: 14px;
+  }
+
+  .cardSummary {
+    font-size: 12px;
+  }
+}
+

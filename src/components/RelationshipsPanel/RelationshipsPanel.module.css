@@ -1,0 +1,271 @@
+/* ====================================
+   RELATIONSHIPS PANEL - NEOBRUTALISM
+   ==================================== */
+
+.relationshipsPanel {
+  background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+  border: 6px solid var(--neo-black, #000000);
+  box-shadow: 8px 8px 0 var(--neo-black, #000000);
+  display: flex;
+  flex-direction: column;
+  max-height: 600px;
+  overflow: hidden;
+}
+
+.panelHeader {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 16px 20px;
+  background: var(--neo-magenta, #ff006e);
+  color: var(--neo-white, #ffffff);
+  border-bottom: 4px solid var(--neo-black, #000000);
+}
+
+.panelHeader h3 {
+  font-weight: 900;
+  font-size: 16px;
+  font-family: 'Courier New', monospace;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  margin: 0;
+  flex: 1;
+}
+
+.totalCount {
+  background: var(--neo-white, #ffffff);
+  color: var(--neo-black, #000000);
+  padding: 4px 10px;
+  border-radius: 2px;
+  font-size: 12px;
+  font-weight: 900;
+  border: 2px solid var(--neo-black, #000000);
+}
+
+.loading,
+.emptyState {
+  padding: 40px 20px;
+  text-align: center;
+  color: var(--neo-black, #000000);
+  font-weight: 700;
+  font-family: 'Courier New', monospace;
+}
+
+.groupsContainer {
+  flex: 1;
+  overflow-y: auto;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.groupsContainer::-webkit-scrollbar {
+  width: 8px;
+}
+
+.groupsContainer::-webkit-scrollbar-track {
+  background: var(--neo-white, #ffffff);
+  border: 2px solid var(--neo-black, #000000);
+}
+
+.groupsContainer::-webkit-scrollbar-thumb {
+  background: var(--neo-magenta, #ff006e);
+  border: 2px solid var(--neo-black, #000000);
+}
+
+.relationshipGroup {
+  background: var(--neo-white, #ffffff);
+  border: 4px solid var(--neo-black, #000000);
+  box-shadow: 4px 4px 0 var(--neo-black, #000000);
+  overflow: hidden;
+}
+
+.groupHeader {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  padding: 12px 16px;
+  background: var(--neo-cyan, #00d4ff);
+  border: none;
+  border-bottom: 3px solid var(--neo-black, #000000);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.groupHeader:hover {
+  background: var(--neo-gold, #FFD700);
+}
+
+.groupIcon {
+  font-size: 18px;
+}
+
+.groupLabel {
+  font-weight: 900;
+  font-size: 14px;
+  font-family: 'Courier New', monospace;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--neo-black, #000000);
+  flex: 1;
+  text-align: left;
+}
+
+.groupCount {
+  background: var(--neo-black, #000000);
+  color: var(--neo-white, #ffffff);
+  padding: 4px 8px;
+  border-radius: 2px;
+  font-size: 11px;
+  font-weight: 900;
+}
+
+.groupChevron {
+  width: 16px;
+  height: 16px;
+  transition: transform 0.3s ease;
+  color: var(--neo-black, #000000);
+}
+
+.groupChevronOpen {
+  transform: rotate(180deg);
+}
+
+.groupContent {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 12px;
+  background: var(--neo-white, #ffffff);
+  overflow: hidden;
+}
+
+.relationshipCard {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 12px;
+  background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+  border: 3px solid var(--neo-black, #000000);
+  box-shadow: 3px 3px 0 var(--neo-black, #000000);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  text-align: left;
+}
+
+.relationshipCard:hover {
+  transform: translate(-2px, -2px);
+  box-shadow: 5px 5px 0 var(--neo-black, #000000);
+  background: var(--neo-cyan, #00d4ff);
+}
+
+.relationshipCard:active {
+  transform: translate(0, 0);
+  box-shadow: 2px 2px 0 var(--neo-black, #000000);
+}
+
+.cardHeader {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.cardIcon {
+  width: 36px;
+  height: 36px;
+  border: 3px solid var(--neo-black, #000000);
+  background: var(--neo-white, #ffffff);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  overflow: hidden;
+}
+
+.cardIcon img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.cardInfo {
+  flex: 1;
+  min-width: 0;
+}
+
+.cardName {
+  font-weight: 900;
+  font-size: 13px;
+  font-family: 'Courier New', monospace;
+  text-transform: uppercase;
+  color: var(--neo-black, #000000);
+  margin: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.cardSubtitle {
+  font-size: 11px;
+  color: var(--neo-black, #000000);
+  font-weight: 700;
+  opacity: 0.7;
+  margin: 2px 0 0 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.strengthIndicator {
+  display: flex;
+  gap: 2px;
+  color: var(--neo-gold, #FFD700);
+}
+
+.cardDescription {
+  font-size: 12px;
+  color: var(--neo-black, #000000);
+  font-weight: 600;
+  line-height: 1.4;
+  margin: 0;
+}
+
+/* Mobile Responsiveness */
+@media (max-width: 768px) {
+  .relationshipsPanel {
+    max-height: 400px;
+  }
+
+  .panelHeader {
+    padding: 12px 16px;
+  }
+
+  .panelHeader h3 {
+    font-size: 14px;
+  }
+
+  .groupsContainer {
+    padding: 12px;
+    gap: 12px;
+  }
+
+  .groupHeader {
+    padding: 10px 12px;
+  }
+
+  .relationshipCard {
+    padding: 10px;
+  }
+
+  .cardName {
+    font-size: 12px;
+  }
+
+  .cardIcon {
+    width: 32px;
+    height: 32px;
+  }
+}
+

@@ -69,6 +69,21 @@ export interface CodexEntry {
   sort_order: number;
   is_active: boolean;
   
+  // Character metadata
+  character_role?: string;
+  character_status?: 'active' | 'deceased' | 'missing' | 'unknown';
+  character_affiliations?: string[];
+  importance_tier?: 1 | 2 | 3;
+  character_tags?: string[];
+  
+  // Event metadata
+  event_date?: string;
+  event_participants?: string[];
+  event_consequences?: string[];
+  
+  // Timeline
+  timeline_era?: string;
+  
   // Metadata
   created_at: string;
   updated_at: string;
@@ -112,6 +127,111 @@ export interface OriginLine {
   to_location_id: string;
   color: string;
   strength: number; // 1-10, affects line thickness
+}
+
+// =====================================================
+// ENHANCED TYPES FOR ADVANCED FEATURES
+// =====================================================
+
+export interface CharacterMetadata {
+  role?: string;
+  status?: 'active' | 'deceased' | 'missing' | 'unknown';
+  affiliations?: string[]; // faction entry_ids
+  importance_tier: 1 | 2 | 3;
+  character_tags?: string[];
+}
+
+export interface EventMetadata {
+  date?: string;
+  era?: string;
+  participants?: string[];
+  location_id?: string;
+  consequences?: string[];
+}
+
+export interface FactionPresence {
+  faction_id: string;
+  faction_name: string;
+  control_level: 'dominant' | 'present' | 'minor';
+  description?: string;
+  color?: string;
+  icon_url?: string;
+}
+
+export interface LocationEnhanced extends Location {
+  population?: number;
+  threat_level?: 1 | 2 | 3 | 4 | 5;
+  atmosphere?: string;
+  key_landmarks?: string[];
+  resources?: string[];
+  access_restrictions?: string;
+  present_factions?: FactionPresence[];
+  stationed_characters?: string[];
+}
+
+export interface RelatedEntry {
+  entry_id: string;
+  entry_type: CodexEntryType;
+  name: string;
+  subtitle?: string;
+  relationship_type: string;
+  relationship_strength: number;
+  description?: string;
+  color: string;
+  icon_url?: string;
+}
+
+export interface CodexEntryEnhanced extends CodexEntry {
+  character_metadata?: CharacterMetadata;
+  event_metadata?: EventMetadata;
+  related_entries?: RelatedEntry[];
+}
+
+export interface CodexFilters {
+  simulation_id?: string;
+  location_id?: string;
+  faction_id?: string;
+  character_status?: string[];
+  importance_tier?: number[];
+  timeline_era?: string;
+  character_tags?: string[];
+  entry_type?: CodexEntryType;
+}
+
+export interface BreadcrumbItem {
+  label: string;
+  path: string;
+  onClick: () => void;
+}
+
+export interface LocationInhabitants {
+  characters: Array<{
+    entry_id: string;
+    name: string;
+    subtitle?: string;
+    color: string;
+    icon_url?: string;
+    stationed: boolean;
+    character_role?: string;
+    character_status?: string;
+  }>;
+  factions: Array<{
+    entry_id: string;
+    name: string;
+    subtitle?: string;
+    color: string;
+    icon_url?: string;
+    control_level: 'dominant' | 'present' | 'minor';
+    description?: string;
+  }>;
+  artifacts: Array<{
+    entry_id: string;
+    name: string;
+    subtitle?: string;
+    color: string;
+    icon_url?: string;
+    summary: string;
+  }>;
 }
 
 // Sample/Default codex data
