@@ -130,7 +130,7 @@
 .toggleButton {
   position: fixed;
   right: 30px;
-  top: 30px;
+  top: 100px; /* Moved below wallet button */
   width: 60px;
   height: 60px;
   background: var(--neo-gold);
@@ -853,6 +853,72 @@
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
   gap: 24px;
+}
+
+.simulationInfoCard {
+  background: linear-gradient(135deg, #0D1B2A 0%, #1a2f42 100%);
+  border: var(--neo-border);
+  border-radius: 0;
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  box-shadow: var(--neo-shadow-cyan);
+  position: relative;
+  overflow: hidden;
+}
+
+.simulationInfoCard::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(90deg, var(--neo-cyan), var(--neo-magenta), var(--neo-gold));
+  animation: pulse 2s ease-in-out infinite;
+}
+
+.infoCardHeader {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  color: var(--neo-cyan);
+  padding-bottom: 12px;
+  border-bottom: 2px solid var(--neo-cyan);
+}
+
+.infoCardHeader h3 {
+  font-size: 20px;
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin: 0;
+}
+
+.infoCardContent {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  color: var(--neo-white);
+  line-height: 1.6;
+}
+
+.infoCardContent p {
+  margin: 0;
+  font-size: 14px;
+  opacity: 0.9;
+}
+
+.infoCardEmphasis {
+  font-weight: 900;
+  color: var(--neo-gold) !important;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  opacity: 1 !important;
+  margin-top: 8px !important;
+  padding-top: 12px;
+  border-top: 2px solid var(--neo-gold);
 }
 
 .simulationCard {

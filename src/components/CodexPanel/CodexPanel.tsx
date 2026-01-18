@@ -3,7 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import styles from './CodexPanel.module.css';
 import type { CodexEntry, CodexEntryType, Simulation } from '@/data/codex-types';
 import { fetchCodexEntries } from '@/lib/supabase';
-import { X, Book, Users, Building2, Cpu, Gem, Zap, Lock, Info, Heart } from 'lucide-react';
+import { X, Book, Users, Building2, Cpu, Gem, Zap, Lock, Info, Heart, Database } from 'lucide-react';
 // TODO: Integrate these components in full implementation
 // import FilterBar from '../FilterBar/FilterBar';
 // import BreadcrumbNavigation from '../BreadcrumbNavigation/BreadcrumbNavigation';
@@ -375,6 +375,24 @@ function SimulationsView({
       </div>
 
       <div className={styles.simulationsList}>
+        {/* Static Info Card */}
+        <motion.div 
+          className={styles.simulationInfoCard}
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.4 }}
+        >
+          <div className={styles.infoCardHeader}>
+            <Database className="w-6 h-6" />
+            <h3>System Overview</h3>
+          </div>
+          <div className={styles.infoCardContent}>
+            <p>Resonance is a functioning cyberpunk society governed by periodic judgment rather than constant collapse. Districts live, create, and thrive—until the system tests them.</p>
+            <p>When a Drop appears, only licensed Scavenjers may intervene. Failure accumulates. Erasure is permanent. Survival is conditional.</p>
+            <p className={styles.infoCardEmphasis}>The system is not broken.<br />It is intentional.</p>
+          </div>
+        </motion.div>
+
         {simulationData.map((simulation, index) => {
           // Find entries related to this simulation
           const relatedEntries = allEntries.filter(entry =>
