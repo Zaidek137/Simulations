@@ -3,7 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import styles from './CodexPanel.module.css';
 import type { CodexEntry, CodexEntryType, Simulation } from '@/data/codex-types';
 import { fetchCodexEntries } from '@/lib/supabase';
-import { X, Book, Users, Building2, Cpu, Gem, Zap, Lock, Info, Heart, Database } from 'lucide-react';
+import { X, Book, Users, Building2, Cpu, Gem, Zap, Lock, Info, Heart, ArrowLeft } from 'lucide-react';
 // TODO: Integrate these components in full implementation
 // import FilterBar from '../FilterBar/FilterBar';
 // import BreadcrumbNavigation from '../BreadcrumbNavigation/BreadcrumbNavigation';
@@ -31,6 +31,17 @@ const CATEGORY_LABELS = {
   simulation: 'Simulations',
   artifact: 'Artifacts',
   event: 'Events',
+};
+
+// Simulation-specific lore descriptions
+const SIMULATION_LORE: Record<string, string> = {
+  'resonance': `Resonance is a functioning cyberpunk society governed by periodic judgment rather than constant collapse. Districts live, create, and thrive—until the system tests them.
+
+When a Drop appears, only licensed Scavenjers may intervene. Failure accumulates. Erasure is permanent. Survival is conditional.
+
+The system is not broken.
+It is intentional.`,
+  // Add more simulations as needed
 };
 
 export default function CodexPanel({ onEntrySelect, selectedEntry, simulationData = [] }: CodexPanelProps) {
@@ -76,11 +87,6 @@ export default function CodexPanel({ onEntrySelect, selectedEntry, simulationDat
     const matchesCategory = !selectedCategory || entry.entry_type === selectedCategory;
     return matchesCategory;
   });
-
-  const handleCategoryClick = (type: CodexEntryType) => {
-    setSelectedCategory(type);
-    setViewMode('categories');
-  };
 
   const handleBack = () => {
     if (selectedEntry) {
@@ -188,7 +194,7 @@ export default function CodexPanel({ onEntrySelect, selectedEntry, simulationDat
                 simulation={simulationData.find(s => s.id === selectedSimulationId)!}
                 allEntries={allEntries}
                 glitchActive={glitchActive}
-                onCategoryClick={handleCategoryClick}
+                onEntrySelect={handleEntryClick}
               />
             ) : selectedCategory ? (
               // Category Entries List
@@ -375,24 +381,6 @@ function SimulationsView({
       </div>
 
       <div className={styles.simulationsList}>
-        {/* Static Info Card */}
-        <motion.div 
-          className={styles.simulationInfoCard}
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.4 }}
-        >
-          <div className={styles.infoCardHeader}>
-            <Database className="w-6 h-6" />
-            <h3>System Overview</h3>
-          </div>
-          <div className={styles.infoCardContent}>
-            <p>Resonance is a functioning cyberpunk society governed by periodic judgment rather than constant collapse. Districts live, create, and thrive—until the system tests them.</p>
-            <p>When a Drop appears, only licensed Scavenjers may intervene. Failure accumulates. Erasure is permanent. Survival is conditional.</p>
-            <p className={styles.infoCardEmphasis}>The system is not broken.<br />It is intentional.</p>
-          </div>
-        </motion.div>
-
         {simulationData.map((simulation, index) => {
           // Find entries related to this simulation
           const relatedEntries = allEntries.filter(entry =>
@@ -455,12 +443,14 @@ function SimulationsView({
 }
 
 // Simulation Categories View Component - shown after selecting a simulation
-function SimulationCategoriesView({ simulation, allEntries, glitchActive, onCategoryClick }: {
+function SimulationCategoriesView({ simulation, allEntries, glitchActive, onEntrySelect }: {
   simulation: Simulation;
   allEntries: CodexEntry[];
   glitchActive: boolean;
-  onCategoryClick: (category: CodexEntryType) => void;
+  onEntrySelect: (entry: CodexEntry) => void;
 }) {
+  const [selectedCategoryInGrid, setSelectedCategoryInGrid] = useState<CodexEntryType | null>(null);
+
   // Filter entries related to this simulation
   const simulationEntries = allEntries.filter(entry =>
     entry.appears_in_locations?.some(locId =>
@@ -473,6 +463,20 @@ function SimulationCategoriesView({ simulation, allEntries, glitchActive, onCate
     acc[type] = simulationEntries.filter(e => e.entry_type === type);
     return acc;
   }, {} as Record<CodexEntryType, CodexEntry[]>);
+
+  // Get lore text for this simulation (case-insensitive match)
+  const simulationKey = simulation.name.toLowerCase().replace(/\s+/g, '-');
+  const loreText = SIMULATION_LORE[simulationKey] || SIMULATION_LORE[simulation.id] || null;
+
+  // Handle category click - show entries in grid
+  const handleCategoryClick = (category: CodexEntryType) => {
+    setSelectedCategoryInGrid(category);
+  };
+
+  // Handle back to categories
+  const handleBackToCategories = () => {
+    setSelectedCategoryInGrid(null);
+  };
 
   return (
     <div className={styles.categoriesView}>
@@ -493,42 +497,110 @@ function SimulationCategoriesView({ simulation, allEntries, glitchActive, onCate
         <span className={styles.count}>{simulationEntries.length} total entries</span>
       </div>
 
-      {/* Left sidebar with categories */}
+      {/* Left sidebar with categories or entries */}
       <div className={styles.categoriesGrid}>
-        {(Object.keys(CATEGORY_LABELS) as CodexEntryType[]).map((category) => {
-          const Icon = CATEGORY_ICONS[category];
-          const count = simulationEntriesByType[category].length;
-
-          if (count === 0) return null;
-
-          return (
+        {selectedCategoryInGrid ? (
+          // Show entries for selected category
+          <>
             <motion.button
-              key={category}
-              className={styles.categoryCard}
-              onClick={() => onCategoryClick(category)}
-              whileHover={{ x: 5 }}
+              className={styles.backButton}
+              onClick={handleBackToCategories}
+              initial={{ opacity: 0, x: -10 }}
+              animate={{ opacity: 1, x: 0 }}
+              whileHover={{ x: -3 }}
               whileTap={{ scale: 0.98 }}
             >
-              <div className={styles.categoryIconWrapper}>
-                <Icon className="w-6 h-6" />
-              </div>
-              <div className={styles.categoryContent}>
-                <h3 className={`${styles.categoryName} ${glitchActive ? styles.glitching : ''}`}>{CATEGORY_LABELS[category]}</h3>
-                <span className={styles.categoryCount}>{count} ENT</span>
-              </div>
+              <ArrowLeft className="w-5 h-5" />
+              <span>Back to Categories</span>
             </motion.button>
-          );
-        })}
+
+            <div className={styles.entriesListHeader}>
+              <h3>{CATEGORY_LABELS[selectedCategoryInGrid]}</h3>
+              <span>{simulationEntriesByType[selectedCategoryInGrid].length} entries</span>
+            </div>
+
+            {simulationEntriesByType[selectedCategoryInGrid].length > 0 ? (
+              simulationEntriesByType[selectedCategoryInGrid].map((entry, index) => (
+                <motion.button
+                  key={entry.id}
+                  className={styles.entryCardInGrid}
+                  onClick={() => onEntrySelect(entry)}
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: index * 0.05 }}
+                  whileHover={{ x: 5 }}
+                  whileTap={{ scale: 0.98 }}
+                >
+                  <div className={styles.entryCardContent}>
+                    <h4>{entry.name}</h4>
+                    <p>{entry.summary?.substring(0, 80)}{entry.summary && entry.summary.length > 80 ? '...' : ''}</p>
+                  </div>
+                </motion.button>
+              ))
+            ) : (
+              <div className={styles.noEntriesMessage}>
+                <p>No entries found in this category yet.</p>
+              </div>
+            )}
+          </>
+        ) : (
+          // Show lore card and categories
+          <>
+            {/* Lore Card */}
+            {loreText && (
+              <div className={styles.loreCard}>
+                <div className={styles.loreCardHeader}>
+                  <Book className="w-5 h-5" />
+                  <h3>Lore</h3>
+                </div>
+                <div className={styles.loreCardContent}>
+                  {loreText.split('\n\n').map((paragraph, idx) => (
+                    <p key={idx} className={paragraph.includes('intentional') ? styles.loreEmphasis : ''}>
+                      {paragraph}
+                    </p>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* Category Cards */}
+            {(Object.keys(CATEGORY_LABELS) as CodexEntryType[]).map((category) => {
+              const Icon = CATEGORY_ICONS[category];
+              const count = simulationEntriesByType[category].length;
+
+              return (
+                <motion.button
+                  key={category}
+                  className={styles.categoryCard}
+                  onClick={() => handleCategoryClick(category)}
+                  whileHover={{ x: 5 }}
+                  whileTap={{ scale: 0.98 }}
+                >
+                  <div className={styles.categoryIconWrapper}>
+                    <Icon className="w-6 h-6" />
+                  </div>
+                  <div className={styles.categoryContent}>
+                    <h3 className={`${styles.categoryName} ${glitchActive ? styles.glitching : ''}`}>{CATEGORY_LABELS[category]}</h3>
+                    <span className={styles.categoryCount}>{count} ENT</span>
+                  </div>
+                </motion.button>
+              );
+            })}
+          </>
+        )}
       </div>
 
       {/* Right side info panel */}
       <div className={styles.categoryInfoPanel}>
         <div className={styles.infoPanelHeader}>
           <Lock className="w-5 h-5" />
-          <span>SELECT CATEGORY</span>
+          <span>{selectedCategoryInGrid ? CATEGORY_LABELS[selectedCategoryInGrid].toUpperCase() : 'SELECT CATEGORY'}</span>
         </div>
         <p className={styles.infoPanelText}>
-          Choose a category from the left panel to view entries for {simulation.name}.
+          {selectedCategoryInGrid 
+            ? `Viewing ${simulationEntriesByType[selectedCategoryInGrid].length} ${CATEGORY_LABELS[selectedCategoryInGrid].toLowerCase()} entries in ${simulation.name}.`
+            : `Choose a category from the left panel to view entries for ${simulation.name}.`
+          }
         </p>
         <div className={styles.infoPanelStats}>
           <div className={styles.infoPanelStat}>
