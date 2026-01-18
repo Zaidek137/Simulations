@@ -574,7 +574,10 @@ function SimulationCategoriesView({ simulation, allEntries, glitchActive, onEntr
           // Category entries view
           <>
             <div className={styles.infoPanelHeader}>
-              {CATEGORY_ICONS[selectedView as AllowedCategory] && <>{CATEGORY_ICONS[selectedView as AllowedCategory]({ className: "w-5 h-5" })}</>}
+              {(() => {
+                const Icon = CATEGORY_ICONS[selectedView as AllowedCategory];
+                return Icon ? <Icon className="w-5 h-5" /> : null;
+              })()}
               <span>{CATEGORY_LABELS[selectedView as AllowedCategory].toUpperCase()}</span>
             </div>
             <div className={styles.entriesListMain}>
