@@ -43,6 +43,15 @@ It is intentional.`,
   // Add more simulations as needed
 };
 
+// Simulation-specific metadata (theme and styles)
+const SIMULATION_METADATA: Record<string, { theme: string; styles: string }> = {
+  'resonance': {
+    theme: 'Soft blend of futurism, cyberpunk and sci-fi',
+    styles: 'Stylized Realism, Neo-Anime',
+  },
+  // Add more simulations as needed
+};
+
 export default function CodexPanel({ onEntrySelect, selectedEntry, simulationData = [] }: CodexPanelProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [viewMode, setViewMode] = useState<ViewMode>('simulations');
@@ -470,6 +479,7 @@ function SimulationCategoriesView({ simulation, allEntries, glitchActive, onEntr
   // Get lore text for this simulation (case-insensitive match)
   const simulationKey = simulation.name.toLowerCase().replace(/\s+/g, '-');
   const loreText = SIMULATION_LORE[simulationKey] || SIMULATION_LORE[simulation.id] || null;
+  const simulationMeta = SIMULATION_METADATA[simulationKey] || SIMULATION_METADATA[simulation.id] || null;
 
   return (
     <div className={styles.categoriesView}>
@@ -568,6 +578,20 @@ function SimulationCategoriesView({ simulation, allEntries, glitchActive, onEntr
                   {paragraph}
                 </p>
               ))}
+              
+              {/* Theme and Styles section */}
+              {simulationMeta && (
+                <div className={styles.simulationMeta}>
+                  <div className={styles.metaSection}>
+                    <h4 className={styles.metaLabel}>Theme</h4>
+                    <p className={styles.metaValue}>{simulationMeta.theme}</p>
+                  </div>
+                  <div className={styles.metaSection}>
+                    <h4 className={styles.metaLabel}>Styles</h4>
+                    <p className={styles.metaValue}>{simulationMeta.styles}</p>
+                  </div>
+                </div>
+              )}
             </div>
           </>
         ) : selectedView && CATEGORY_LABELS[selectedView as AllowedCategory] ? (
@@ -643,7 +667,7 @@ export function IntroDialog({ onClose }: { onClose: () => void }) {
             <Heart className="w-5 h-5 text-purple-400 flex-shrink-0" />
             <p>
               Scavenjer is currently a <strong>new experimental solo project</strong> without 
-              backing—a passion-driven exploration of interactive storytelling and world-building.
+              backing. It is a passion-driven exploration of interactive storytelling and world-building. A.I is used to generate imagery but the goal is to collaborate with real artists and professionals to create the best possible experience.
             </p>
           </div>
 

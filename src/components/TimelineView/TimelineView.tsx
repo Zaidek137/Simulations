@@ -181,3 +181,4 @@ export default function TimelineView({ events, onEventClick, onParticipantClick 
   );
 }
 
+

@@ -26,6 +26,8 @@ export interface Simulation {
   backgroundUrl: string;
   imageUrl: string;
   locations: Location[];
+  theme?: string;
+  styles?: string;
 }
 
 // Legacy alias for backward compatibility

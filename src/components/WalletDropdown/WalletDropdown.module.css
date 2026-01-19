@@ -1,0 +1,239 @@
+/* Neobrutalism Variables (matching Codex button) */
+:root {
+  --neo-navy: #0D1B2A;
+  --neo-black: #000000;
+  --neo-cyan: #00F5FF;
+  --neo-magenta: #FF0055;
+  --neo-gold: #FFD700;
+  --neo-white: #FFFFFF;
+  --neo-shadow: 4px 4px 0 var(--neo-black);
+  --neo-shadow-cyan: 4px 4px 0 var(--neo-cyan);
+  --neo-border: 4px solid var(--neo-black);
+}
+
+.container {
+  position: relative;
+}
+
+.triggerButton {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1.5rem;
+  background: var(--neo-gold);
+  border: var(--neo-border);
+  border-radius: 0;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  box-shadow: var(--neo-shadow-cyan);
+  min-height: 60px;
+  font-weight: 900;
+}
+
+.triggerButton:hover {
+  transform: translate(4px, 4px);
+  box-shadow: none;
+}
+
+.avatar {
+  width: 2rem;
+  height: 2rem;
+  border-radius: 50%;
+  background: var(--neo-black);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.avatarIcon {
+  width: 1rem;
+  height: 1rem;
+  color: var(--neo-gold);
+}
+
+.addressContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.connectedLabel {
+  font-size: 0.65rem;
+  color: var(--neo-black);
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.address {
+  font-size: 0.875rem;
+  color: var(--neo-black);
+  font-family: monospace;
+  font-weight: 700;
+}
+
+.chevron {
+  width: 1rem;
+  height: 1rem;
+  color: var(--neo-black);
+  transition: transform 0.15s ease;
+}
+
+.chevronOpen {
+  transform: rotate(180deg);
+}
+
+/* Dropdown Menu */
+.dropdownMenu {
+  position: absolute;
+  right: 0;
+  top: calc(100% + 0.5rem);
+  width: 18rem;
+  background: var(--neo-white);
+  border: var(--neo-border);
+  border-radius: 0;
+  box-shadow: var(--neo-shadow-cyan);
+  overflow: hidden;
+  z-index: 100;
+}
+
+.userInfo {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.75rem 1rem;
+  border-bottom: var(--neo-border);
+  background: var(--neo-gold);
+}
+
+.userInfoAvatar {
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: 50%;
+  background: var(--neo-black);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  border: 3px solid var(--neo-black);
+}
+
+.userInfoAvatarIcon {
+  width: 1.25rem;
+  height: 1.25rem;
+  color: var(--neo-gold);
+}
+
+.userInfoText {
+  flex: 1;
+  min-width: 0;
+}
+
+.walletLabel {
+  font-size: 0.65rem;
+  color: var(--neo-black);
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin: 0;
+}
+
+.fullAddress {
+  font-size: 0.75rem;
+  color: var(--neo-black);
+  font-family: monospace;
+  margin: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-weight: 700;
+}
+
+.menuItems {
+  padding: 0.5rem 0;
+}
+
+.menuItem {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.75rem 1rem;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  text-align: left;
+}
+
+.menuItem:hover {
+  background: var(--neo-cyan);
+  transform: translateX(4px);
+}
+
+.menuIcon {
+  width: 1rem;
+  height: 1rem;
+  color: var(--neo-black);
+  flex-shrink: 0;
+}
+
+.menuItemText {
+  flex: 1;
+}
+
+.menuItemTitle {
+  font-size: 0.875rem;
+  font-weight: 700;
+  color: var(--neo-black);
+}
+
+.menuItemSubtitle {
+  font-size: 0.75rem;
+  color: var(--neo-navy);
+  font-weight: 500;
+}
+
+.divider {
+  height: 4px;
+  background: var(--neo-black);
+  margin: 0.5rem 1rem;
+}
+
+.menuItemDanger {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.75rem 1rem;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  text-align: left;
+}
+
+.menuItemDanger:hover {
+  background: var(--neo-magenta);
+  transform: translateX(4px);
+}
+
+.menuItemDanger:hover .menuIconDanger,
+.menuItemDanger:hover .menuItemTitleDanger {
+  color: var(--neo-white);
+}
+
+.menuIconDanger {
+  width: 1rem;
+  height: 1rem;
+  color: var(--neo-magenta);
+  flex-shrink: 0;
+  transition: color 0.15s ease;
+}
+
+.menuItemTitleDanger {
+  font-size: 0.875rem;
+  font-weight: 700;
+  color: var(--neo-magenta);
+  transition: color 0.15s ease;
+}

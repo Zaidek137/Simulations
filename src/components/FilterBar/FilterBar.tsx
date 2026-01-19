@@ -219,3 +219,4 @@ export default function FilterBar({ filters, onFiltersChange, simulations = [], 
   );
 }
 
+

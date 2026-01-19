@@ -20,7 +20,8 @@
     "react-router-dom": "^6.26.0",
     "lucide-react": "^0.263.1",
     "clsx": "^2.1.1",
-    "tailwind-merge": "^2.4.0"
+    "tailwind-merge": "^2.4.0",
+    "thirdweb": "^5.102.5"
   },
   "devDependencies": {
     "@types/d3": "^7.4.3",

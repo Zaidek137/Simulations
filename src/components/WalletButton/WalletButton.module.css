@@ -1,0 +1,43 @@
+/* Neobrutalism Variables (matching Codex button) */
+:root {
+  --neo-navy: #0D1B2A;
+  --neo-black: #000000;
+  --neo-cyan: #00F5FF;
+  --neo-magenta: #FF0055;
+  --neo-gold: #FFD700;
+  --neo-white: #FFFFFF;
+  --neo-shadow: 4px 4px 0 var(--neo-black);
+  --neo-shadow-cyan: 4px 4px 0 var(--neo-cyan);
+  --neo-border: 4px solid var(--neo-black);
+}
+
+.container {
+  position: fixed;
+  top: 30px;
+  right: 30px;
+  z-index: 1000;
+}
+
+/* Wrapper for ConnectButton with neobrutalism styling */
+.container :global(button) {
+  background: var(--neo-gold) !important;
+  border: var(--neo-border) !important;
+  border-radius: 0 !important;
+  color: var(--neo-black) !important;
+  font-weight: 900 !important;
+  transition: all 0.15s ease !important;
+  box-shadow: var(--neo-shadow-cyan) !important;
+  padding: 0.75rem 1.5rem !important;
+  min-height: 60px !important;
+  cursor: pointer !important;
+}
+
+.container :global(button:hover) {
+  transform: translate(4px, 4px) !important;
+  box-shadow: none !important;
+}
+
+.container :global(button:active) {
+  transform: translate(4px, 4px) !important;
+  box-shadow: none !important;
+}

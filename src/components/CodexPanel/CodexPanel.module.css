@@ -7,7 +7,7 @@
   --neo-black: #000000;
   --neo-cyan: #00F5FF;
   --neo-magenta: #FF0055;
-  --neo-gold: #8B7335;
+  --neo-gold: #2D5016;
   --neo-white: #F8F9FA;
   --neo-gray: #E8E9EA;
   
@@ -584,7 +584,7 @@
 }
 
 .loreCardHeader h3 {
-  font-size: 16px;
+  font-size: 18px;
   font-weight: 900;
   text-transform: uppercase;
   letter-spacing: 0.08em;
@@ -605,7 +605,7 @@
 
 .loreContentMain p {
   margin: 0;
-  font-size: 14px;
+  font-size: 16px;
   line-height: 1.7;
 }
 
@@ -617,6 +617,38 @@
   padding-top: 12px;
   border-top: 2px solid var(--neo-gold);
   margin-top: 8px !important;
+}
+
+.simulationMeta {
+  margin-top: 24px;
+  padding-top: 24px;
+  border-top: 3px solid var(--neo-gold);
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.metaSection {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.metaLabel {
+  font-size: 14px;
+  font-weight: 900;
+  color: var(--neo-gold);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  margin: 0;
+}
+
+.metaValue {
+  font-size: 16px;
+  font-weight: 400;
+  color: var(--neo-black);
+  line-height: 1.6;
+  margin: 0;
 }
 
 .entriesListMain {
@@ -654,7 +686,7 @@
 }
 
 .entryName {
-  font-size: 14px;
+  font-size: 16px;
   font-weight: 900;
   color: var(--neo-black);
   text-transform: uppercase;
@@ -1307,7 +1339,7 @@
 }
 
 .categoryName {
-  font-size: 14px;
+  font-size: 16px;
   font-weight: 900;
   color: var(--neo-black);
   margin: 0;
