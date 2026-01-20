@@ -611,18 +611,18 @@
 
 .loreEmphasisMain {
   font-weight: 900;
-  color: var(--neo-gold) !important;
+  color: #2D5016 !important;
   text-transform: uppercase;
   letter-spacing: 0.04em;
   padding-top: 12px;
-  border-top: 2px solid var(--neo-gold);
+  border-top: 2px solid #2D5016;
   margin-top: 8px !important;
 }
 
 .simulationMeta {
   margin-top: 24px;
   padding-top: 24px;
-  border-top: 3px solid var(--neo-gold);
+  border-top: 3px solid #2D5016;
   display: flex;
   flex-direction: column;
   gap: 16px;
@@ -637,7 +637,7 @@
 .metaLabel {
   font-size: 14px;
   font-weight: 900;
-  color: var(--neo-gold);
+  color: #2D5016;
   text-transform: uppercase;
   letter-spacing: 0.08em;
   margin: 0;
