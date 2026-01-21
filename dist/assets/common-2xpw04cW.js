@@ -1,0 +1,2 @@
+import{q as s}from"./index-B5Z1dpp4.js";import"./framer-motion-BLeoVWJg.js";import"./react-vendor-hc9cV1gX.js";import"./d3-vendor-DXMZTTbz.js";import"./supabase-vendor-CzrfDcjy.js";async function h(n){const t=await s();if(!n.every(i=>t.includes(i.id)))throw new Error(`Insight is not available for chains ${n.filter(i=>!t.includes(i.id)).map(i=>i.id).join(", ")}`)}export{h as assertInsightEnabled};
+//# sourceMappingURL=common-2xpw04cW.js.map

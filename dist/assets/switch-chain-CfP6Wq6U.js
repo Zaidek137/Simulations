@@ -1,0 +1,2 @@
+import{G as t,J as r}from"./index-B5Z1dpp4.js";import"./framer-motion-BLeoVWJg.js";import"./react-vendor-hc9cV1gX.js";import"./d3-vendor-DXMZTTbz.js";import"./supabase-vendor-CzrfDcjy.js";async function p(n){const{wallet:i,params:a}=n;return i.getChain()?.id===t(a[0].chainId)||await i.switchChain(r(t(a[0].chainId))),"0x1"}export{p as handleSwitchChain};
+//# sourceMappingURL=switch-chain-CfP6Wq6U.js.map
