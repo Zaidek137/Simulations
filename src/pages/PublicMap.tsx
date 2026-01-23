@@ -159,13 +159,67 @@ export default function PublicMap() {
     setShowIntro(false);
   };
 
-  // Show loading state
+  // Show loading state with skeleton UI
   if (isLoading) {
     return (
-      <main className="flex items-center justify-center min-h-screen bg-black">
+      <main className="flex items-center justify-center min-h-screen" style={{ background: '#0D1B2A' }}>
         <div className="text-center">
-          <div className="animate-spin rounded-full h-16 w-16 border-t-2 border-b-2 border-indigo-500 mx-auto mb-4"></div>
-          <p className="text-white text-lg">Loading Simulations...</p>
+          {/* Animated loading spinner */}
+          <div 
+            className="mx-auto mb-6"
+            style={{
+              width: '64px',
+              height: '64px',
+              border: '4px solid rgba(0, 245, 255, 0.2)',
+              borderTopColor: '#00F5FF',
+              borderRadius: '50%',
+              animation: 'spin 0.8s linear infinite',
+            }}
+          />
+          
+          {/* Loading text with glow effect */}
+          <p 
+            className="text-lg font-bold mb-2"
+            style={{ 
+              color: '#00F5FF',
+              textShadow: '0 0 10px rgba(0, 245, 255, 0.5)',
+              letterSpacing: '2px',
+            }}
+          >
+            INITIALIZING SIMULATIONS
+          </p>
+          
+          {/* Progress bar skeleton */}
+          <div 
+            className="mx-auto mt-4"
+            style={{
+              width: '200px',
+              height: '4px',
+              background: 'rgba(0, 245, 255, 0.1)',
+              borderRadius: '2px',
+              overflow: 'hidden',
+            }}
+          >
+            <div 
+              style={{
+                width: '100%',
+                height: '100%',
+                background: 'linear-gradient(90deg, transparent, #00F5FF, transparent)',
+                animation: 'shimmer 1.5s ease-in-out infinite',
+              }}
+            />
+          </div>
+          
+          {/* Inline keyframes for loading animation */}
+          <style>{`
+            @keyframes spin {
+              to { transform: rotate(360deg); }
+            }
+            @keyframes shimmer {
+              0% { transform: translateX(-100%); }
+              100% { transform: translateX(100%); }
+            }
+          `}</style>
         </div>
       </main>
     );

@@ -6,10 +6,89 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="description" content="Explore the interconnected universes of Scavenjer through an interactive visual experience" />
     <title>Scavenjer Universes | Interactive Lore Map</title>
+    
+    <!-- Preload critical fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    
+    <!-- Preload critical resources -->
+    <link rel="preload" href="/src/main.tsx" as="script" crossorigin />
+    
+    <!-- DNS prefetch for external services -->
+    <link rel="dns-prefetch" href="https://zrolrdnymkkdcyksuctq.supabase.co" />
+    
+    <!-- Initial loading styles (inline for fast render) -->
+    <style>
+      body {
+        margin: 0;
+        background: #0D1B2A;
+      }
+      
+      #root {
+        opacity: 0;
+        animation: fadeIn 0.3s ease-out forwards;
+        animation-delay: 0.1s;
+      }
+      
+      @keyframes fadeIn {
+        from { opacity: 0; }
+        to { opacity: 1; }
+      }
+      
+      /* Initial loading spinner (before React hydrates) */
+      .initial-loader {
+        position: fixed;
+        inset: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: #0D1B2A;
+        z-index: 9999;
+        transition: opacity 0.3s ease-out;
+      }
+      
+      .initial-loader.hidden {
+        opacity: 0;
+        pointer-events: none;
+      }
+      
+      .loader-spinner {
+        width: 48px;
+        height: 48px;
+        border: 3px solid rgba(0, 245, 255, 0.2);
+        border-top-color: #00F5FF;
+        border-radius: 50%;
+        animation: spin 1s linear infinite;
+      }
+      
+      @keyframes spin {
+        to { transform: rotate(360deg); }
+      }
+    </style>
   </head>
   <body>
+    <!-- Initial loader shown before React hydrates -->
+    <div class="initial-loader" id="initial-loader">
+      <div class="loader-spinner"></div>
+    </div>
+    
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
+    
+    <!-- Hide initial loader when React is ready -->
+    <script>
+      window.addEventListener('load', function() {
+        setTimeout(function() {
+          var loader = document.getElementById('initial-loader');
+          if (loader) {
+            loader.classList.add('hidden');
+            setTimeout(function() {
+              loader.remove();
+            }, 300);
+          }
+        }, 100);
+      });
+    </script>
   </body>
 </html>
 

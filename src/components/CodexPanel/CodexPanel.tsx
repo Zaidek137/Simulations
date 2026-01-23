@@ -3,7 +3,8 @@ import { motion, AnimatePresence } from 'framer-motion';
 import styles from './CodexPanel.module.css';
 import type { CodexEntry, CodexEntryType, Simulation } from '@/data/codex-types';
 import { fetchCodexEntries } from '@/lib/supabase';
-import { X, Book, Users, Building2, Cpu, Gem, Zap, Lock, Info, Heart, ArrowLeft } from 'lucide-react';
+import { X, Book, Users, Building2, Cpu, Gem, Zap, Lock, Info, Heart, ArrowLeft, ShoppingCart } from 'lucide-react';
+import CrossmintCheckoutModal from '../CrossmintCheckoutModal/CrossmintCheckoutModal';
 // TODO: Integrate these components in full implementation
 // import FilterBar from '../FilterBar/FilterBar';
 // import BreadcrumbNavigation from '../BreadcrumbNavigation/BreadcrumbNavigation';
@@ -15,7 +16,7 @@ interface CodexPanelProps {
   simulationData?: Simulation[];
 }
 
-type ViewMode = 'categories' | 'simulations' | 'detail' | 'simulation-categories';
+type ViewMode = 'categories' | 'simulations' | 'detail' | 'simulation-categories' | 'universal-rules';
 
 const CATEGORY_ICONS = {
   character: Users,
@@ -31,6 +32,46 @@ const CATEGORY_LABELS = {
 } as const;
 
 type AllowedCategory = keyof typeof CATEGORY_LABELS;
+
+// Dynamic category label based on simulation - Resonance uses "Sectors" instead of "Factions"
+function getCategoryLabel(category: AllowedCategory, simulationName?: string): string {
+  if (category === 'faction' && simulationName?.toLowerCase() === 'resonance') {
+    return 'Sectors';
+  }
+  return CATEGORY_LABELS[category];
+}
+
+// Universal lore topics that span all simulations
+const UNIVERSAL_LORE = [
+  {
+    id: 'techwear',
+    title: 'Techwear',
+    description: 'Functional fashion engineered for the urban Scavenjer. Techwear blends cutting-edge materials with tactical utility—weatherproof fabrics, integrated tech pouches, and modular attachments designed for those who live on the edge of digital and physical worlds.',
+    imageUrl: 'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=800&h=600&fit=crop&q=80',
+    color: 'cyan' // Cyan theme
+  },
+  {
+    id: 'drops',
+    title: 'Drops',
+    description: 'Mysterious digital artifacts that manifest in physical locations across simulations. Drops contain valuable data, rare collectibles, or clues to deeper mysteries. Only licensed Scavenjers can claim them—but competition is fierce.',
+    imageUrl: 'https://images.unsplash.com/photo-1635070041078-e363dbe005cb?w=800&h=600&fit=crop&q=80',
+    color: 'magenta' // Magenta theme
+  },
+  {
+    id: 'zaidek',
+    title: 'Zaidek',
+    description: 'The enigmatic figure behind Scavenjer. Little is known about Zaidek\'s true origins or motivations. Some say they\'re an architect of simulations, others believe they\'re searching for something lost across infinite digital realms.',
+    imageUrl: 'https://images.unsplash.com/photo-1550751827-4bd374c3f58b?w=800&h=600&fit=crop&q=80',
+    color: 'gold' // Gold theme
+  },
+  {
+    id: 'music',
+    title: 'Music',
+    description: 'Sound is currency in the Scavenjer universe. Music carries data, emotions, and sometimes hidden messages. The beats that pulse through simulations are more than entertainment—they\'re the heartbeat of digital existence.',
+    imageUrl: 'https://images.unsplash.com/photo-1511379938547-c1f69419868d?w=800&h=600&fit=crop&q=80',
+    color: 'navy' // Navy theme
+  }
+];
 
 // Simulation-specific lore descriptions
 const SIMULATION_LORE: Record<string, string> = {
@@ -60,6 +101,7 @@ export default function CodexPanel({ onEntrySelect, selectedEntry, simulationDat
   const [allEntries, setAllEntries] = useState<CodexEntry[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [glitchActive, setGlitchActive] = useState(false);
+  const [showCheckoutModal, setShowCheckoutModal] = useState(false);
   // TODO: Uncomment when integrating FilterBar and BreadcrumbNavigation
   // const [filters, setFilters] = useState<CodexFilters>({});
   // const [breadcrumbs, setBreadcrumbs] = useState<BreadcrumbItem[]>([]);
@@ -114,6 +156,9 @@ export default function CodexPanel({ onEntrySelect, selectedEntry, simulationDat
       // From simulation categories -> back to simulations list
       setViewMode('simulations');
       setSelectedSimulationId(null);
+    } else if (viewMode === 'universal-rules') {
+      // From universal rules -> back to simulations list
+      setViewMode('simulations');
     }
   };
 
@@ -153,7 +198,7 @@ export default function CodexPanel({ onEntrySelect, selectedEntry, simulationDat
           {/* Header */}
           <div className={styles.header}>
             <div className={styles.headerLeft}>
-              {(selectedEntry || selectedCategory || viewMode === 'simulation-categories') && (
+              {(selectedEntry || selectedCategory || viewMode === 'simulation-categories' || viewMode === 'universal-rules') && (
                 <button onClick={handleBack} className={styles.backButton}>
                   ← Back
                 </button>
@@ -162,11 +207,38 @@ export default function CodexPanel({ onEntrySelect, selectedEntry, simulationDat
                 <Book className="w-6 h-6" />
                 Codex Database
               </h1>
+              {/* Universal Rules Button in Header */}
+              {viewMode === 'simulations' && (
+                <button 
+                  onClick={() => setViewMode('universal-rules')} 
+                  className={styles.universalRulesHeaderButton}
+                  title="View Universal Rules"
+                >
+                  <Book className="w-3 h-3" />
+                  <span>UNIVERSAL RULES</span>
+                </button>
+              )}
             </div>
-            <button onClick={() => setIsOpen(false)} className={styles.closeButton}>
-              <X className="w-6 h-6" />
-            </button>
+            <div className={styles.headerRight}>
+              <button 
+                onClick={() => setShowCheckoutModal(true)} 
+                className={styles.buyButton}
+                title="Get an Eko"
+              >
+                <ShoppingCart className="w-4 h-4" />
+                <span>GET EKO</span>
+              </button>
+              <button onClick={() => setIsOpen(false)} className={styles.closeButton}>
+                <X className="w-6 h-6" />
+              </button>
+            </div>
           </div>
+
+          {/* Crossmint Checkout Modal */}
+          <CrossmintCheckoutModal 
+            isOpen={showCheckoutModal} 
+            onClose={() => setShowCheckoutModal(false)} 
+          />
 
           {/* Marquee Banner */}
           <div className={styles.marquee}>
@@ -185,6 +257,9 @@ export default function CodexPanel({ onEntrySelect, selectedEntry, simulationDat
             ) : selectedEntry ? (
               // Detail View
               <DetailView entry={selectedEntry} />
+            ) : viewMode === 'universal-rules' ? (
+              // Universal Rules View
+              <UniversalRulesView glitchActive={glitchActive} />
             ) : viewMode === 'simulations' ? (
               // Simulations View - Entry point, no categories shown yet
               <SimulationsView 
@@ -339,6 +414,138 @@ function DetailView({ entry }: { entry: CodexEntry }) {
   );
 }
 
+// Helper to check if simulation is locked (only Resonance is unlocked)
+function isSimulationLocked(simulationName: string): boolean {
+  return simulationName.toLowerCase() !== 'resonance';
+}
+
+// Universal Rules Full View - Vertical Digital Card Design
+function UniversalRulesView({ glitchActive }: { glitchActive: boolean }) {
+  return (
+    <div className={styles.universalRulesView}>
+      <div className={styles.universalRulesHeader}>
+        <Book className="w-6 h-6" />
+        <h2 className={glitchActive ? styles.glitching : ''}>Universal Rules</h2>
+        <span className={styles.count}>{UNIVERSAL_LORE.length} Rules</span>
+      </div>
+
+      <p className={styles.universalRulesDescription}>
+        Core principles and elements that exist across all simulations in the Scavenjer ecosystem.
+      </p>
+
+      <div className={styles.universalRulesGrid}>
+        {UNIVERSAL_LORE.map((lore, index) => (
+          <motion.div
+            key={lore.id}
+            className={styles.universalRuleCard}
+            data-color={lore.color}
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: index * 0.1 }}
+            whileHover={{ y: -4 }}
+          >
+            {/* Digital Header Bar */}
+            <div className={styles.ruleCardHeader}>
+              <div className={styles.ruleCardHeaderBar}>
+                <div className={styles.ruleCardDots}>
+                  <span></span>
+                  <span></span>
+                  <span></span>
+                </div>
+                <div className={styles.ruleCardId}>RULE_{String(index + 1).padStart(2, '0')}</div>
+              </div>
+            </div>
+
+            {/* Image Section */}
+            {lore.imageUrl && (
+              <div className={styles.ruleCardImageWrapper}>
+                <div className={styles.ruleCardImageOverlay}></div>
+                <img 
+                  src={lore.imageUrl} 
+                  alt={lore.title}
+                  className={styles.ruleCardImage}
+                  onError={(e) => {
+                    // Hide image if it fails to load
+                    (e.target as HTMLImageElement).style.display = 'none';
+                  }}
+                />
+                <div className={styles.ruleCardImageScanline}></div>
+              </div>
+            )}
+
+            {/* Content Section */}
+            <div className={styles.ruleCardContent}>
+              <div className={styles.ruleCardTitleBar}>
+                <div className={styles.ruleCardIcon}>
+                  <Zap className="w-4 h-4" />
+                </div>
+                <h3 className={styles.ruleCardTitle}>{lore.title.toUpperCase()}</h3>
+              </div>
+              
+              <div className={styles.ruleCardDivider}></div>
+              
+              <p className={styles.ruleCardDescription}>{lore.description}</p>
+
+              {/* Digital Footer */}
+              <div className={styles.ruleCardFooter}>
+                <div className={styles.ruleCardStatus}>
+                  <span className={styles.ruleCardStatusDot}></span>
+                  ACTIVE
+                </div>
+                <div className={styles.ruleCardMetadata}>
+                  UNIVERSAL_PROTOCOL
+                </div>
+              </div>
+            </div>
+          </motion.div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+// Locked Simulation Dialog Component
+function LockedSimulationDialog({ onClose }: { onClose: () => void }) {
+  return (
+    <motion.div
+      className={styles.lockedDialogOverlay}
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      onClick={onClose}
+    >
+      <motion.div
+        className={styles.lockedDialog}
+        initial={{ scale: 0.9, y: 20 }}
+        animate={{ scale: 1, y: 0 }}
+        exit={{ scale: 0.9, y: 20 }}
+        onClick={(e) => e.stopPropagation()}
+      >
+        <div className={styles.lockedDialogIcon}>
+          <Lock className="w-8 h-8" />
+        </div>
+        <h3 className={styles.lockedDialogTitle}>Simulation Locked</h3>
+        <p className={styles.lockedDialogText}>
+          This simulation is still being built. Want to help shape it or be the first to view it? Support Scavenjer and become an Eko holder!
+        </p>
+        <div className={styles.lockedDialogButtons}>
+          <a 
+            href="https://neomarket.scavenjer.com/collection/scavenjers" 
+            target="_blank" 
+            rel="noopener noreferrer"
+            className={styles.lockedDialogButtonPrimary}
+          >
+            View Ekos
+          </a>
+          <button onClick={onClose} className={styles.lockedDialogButtonSecondary}>
+            Close
+          </button>
+        </div>
+      </motion.div>
+    </motion.div>
+  );
+}
+
 // Simulations View - Entry point, descriptions shown prominently
 function SimulationsView({
   simulationData,
@@ -352,6 +559,7 @@ function SimulationsView({
   onSimulationSelect: (simulationId: string) => void;
 }) {
   const [glitchedText, setGlitchedText] = useState<{[key: string]: string}>({});
+  const [showLockedDialog, setShowLockedDialog] = useState(false);
 
   // Random glitch effect on text
   useEffect(() => {
@@ -384,8 +592,24 @@ function SimulationsView({
     return () => clearInterval(glitchInterval);
   }, [simulationData]);
 
+  const handleSimulationClick = (simulation: Simulation) => {
+    if (isSimulationLocked(simulation.name)) {
+      setShowLockedDialog(true);
+    } else {
+      onSimulationSelect(simulation.id);
+    }
+  };
+
   return (
     <div className={styles.simulationsView}>
+      {/* Locked Dialog */}
+      <AnimatePresence>
+        {showLockedDialog && (
+          <LockedSimulationDialog onClose={() => setShowLockedDialog(false)} />
+        )}
+      </AnimatePresence>
+
+      {/* Simulations Header */}
       <div className={styles.simulationsHeader}>
         <Cpu className="w-6 h-6" />
         <h2 className={glitchActive ? styles.glitching : ''}>Simulations</h2>
@@ -402,16 +626,25 @@ function SimulationsView({
           );
 
           const displayName = glitchedText[simulation.id] || simulation.name;
+          const isLocked = isSimulationLocked(simulation.name);
 
           return (
             <motion.div 
               key={simulation.id} 
-              className={styles.simulationCard}
-              onClick={() => onSimulationSelect(simulation.id)}
+              className={`${styles.simulationCard} ${isLocked ? styles.simulationCardLocked : ''}`}
+              onClick={() => handleSimulationClick(simulation)}
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: index * 0.1 }}
             >
+              {/* Locked Badge */}
+              {isLocked && (
+                <div className={styles.lockedBadgeOverlay}>
+                  <Lock className="w-4 h-4" />
+                  <span>LOCKED</span>
+                </div>
+              )}
+
               <div className={styles.simulationHeader}>
                 <div 
                   className={styles.simulationIcon}
@@ -444,7 +677,7 @@ function SimulationsView({
               </div>
 
               <div className={styles.clickHint}>
-                Access →
+                {isLocked ? 'Locked' : 'Access →'}
               </div>
             </motion.div>
           );
@@ -534,7 +767,7 @@ function SimulationCategoriesView({ simulation, allEntries, glitchActive, onEntr
                 <Icon className="w-6 h-6" />
               </div>
               <div className={styles.categoryContent}>
-                <h3 className={`${styles.categoryName} ${glitchActive ? styles.glitching : ''}`}>{CATEGORY_LABELS[category]}</h3>
+                <h3 className={`${styles.categoryName} ${glitchActive ? styles.glitching : ''}`}>{getCategoryLabel(category, simulation.name)}</h3>
                 <span className={styles.categoryCount}>{count} ENT</span>
               </div>
             </motion.button>
@@ -602,7 +835,7 @@ function SimulationCategoriesView({ simulation, allEntries, glitchActive, onEntr
                 const Icon = CATEGORY_ICONS[selectedView as AllowedCategory];
                 return Icon ? <Icon className="w-5 h-5" /> : null;
               })()}
-              <span>{CATEGORY_LABELS[selectedView as AllowedCategory].toUpperCase()}</span>
+              <span>{getCategoryLabel(selectedView as AllowedCategory, simulation.name).toUpperCase()}</span>
             </div>
             <div className={styles.entriesListMain}>
               {simulationEntriesByType[selectedView as AllowedCategory]?.length > 0 ? (
@@ -620,7 +853,7 @@ function SimulationCategoriesView({ simulation, allEntries, glitchActive, onEntr
                 ))
               ) : (
                 <div className={styles.noEntriesMessage}>
-                  <p>No {CATEGORY_LABELS[selectedView as AllowedCategory].toLowerCase()} found in this simulation yet.</p>
+                  <p>No {getCategoryLabel(selectedView as AllowedCategory, simulation.name).toLowerCase()} found in this simulation yet.</p>
                 </div>
               )}
             </div>
@@ -658,7 +891,7 @@ export function IntroDialog({ onClose }: { onClose: () => void }) {
             <Info className="w-5 h-5 text-indigo-400 flex-shrink-0" />
             <p>
               You're viewing an <strong>ever-evolving lore system</strong> for Scavenjer. 
-              As the story unfolds, this codex will grow and change—entries may be updated, 
+              As the story unfolds, this codex will grow and change. Entries may be updated, 
               new mysteries revealed, and connections deepened.
             </p>
           </div>
@@ -672,7 +905,7 @@ export function IntroDialog({ onClose }: { onClose: () => void }) {
           </div>
 
           <div className={styles.introCallout}>
-            <h3 className={styles.introCalloutTitle}>Want to Help Shape This Universe?</h3>
+            <h3 className={styles.introCalloutTitle}>Want to Help Shape This Project?</h3>
             <p className={styles.introCalloutText}>
               If you'd like to contribute to the Scavenjer story, help with development, 
               or support the project in other ways:

@@ -1,0 +1,288 @@
+/* ====================================
+   CROSSMINT CHECKOUT MODAL - CYBERPUNK THEME
+   ==================================== */
+
+.overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.95);
+  backdrop-filter: blur(12px);
+  z-index: 350;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+
+.modal {
+  background: linear-gradient(135deg, #0D1B2A 0%, #1a2f42 100%);
+  border: 3px solid #00F5FF;
+  border-radius: 0;
+  max-width: 480px;
+  width: 100%;
+  box-shadow: 
+    0 0 40px rgba(0, 245, 255, 0.3),
+    0 0 80px rgba(0, 245, 255, 0.1),
+    8px 8px 0 #000000;
+  overflow: hidden;
+  animation: modalGlow 3s ease-in-out infinite;
+}
+
+@keyframes modalGlow {
+  0%, 100% {
+    box-shadow: 
+      0 0 40px rgba(0, 245, 255, 0.3),
+      0 0 80px rgba(0, 245, 255, 0.1),
+      8px 8px 0 #000000;
+  }
+  50% {
+    box-shadow: 
+      0 0 50px rgba(0, 245, 255, 0.4),
+      0 0 100px rgba(0, 245, 255, 0.2),
+      8px 8px 0 #000000;
+  }
+}
+
+/* Header */
+.header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 20px 24px;
+  background: rgba(0, 245, 255, 0.08);
+  border-bottom: 2px solid rgba(0, 245, 255, 0.3);
+}
+
+.headerIcon {
+  width: 40px;
+  height: 40px;
+  background: rgba(0, 245, 255, 0.15);
+  border: 2px solid #00F5FF;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #00F5FF;
+}
+
+.title {
+  flex: 1;
+  font-size: 20px;
+  font-weight: 900;
+  color: #FFFFFF;
+  letter-spacing: 2px;
+  margin: 0;
+  text-transform: uppercase;
+}
+
+.closeButton {
+  width: 36px;
+  height: 36px;
+  background: transparent;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  color: rgba(255, 255, 255, 0.7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.closeButton:hover {
+  border-color: #FF0055;
+  color: #FF0055;
+}
+
+/* Content */
+.content {
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+/* Collection Card */
+.collectionCard {
+  background: rgba(0, 0, 0, 0.4);
+  border: 1px solid rgba(0, 245, 255, 0.2);
+  padding: 20px;
+}
+
+.collectionHeader {
+  margin-bottom: 12px;
+}
+
+.collectionBadge {
+  background: linear-gradient(90deg, #00F5FF, #00D4E0);
+  color: #000000;
+  padding: 4px 12px;
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+
+.collectionName {
+  font-size: 24px;
+  font-weight: 900;
+  color: #FFFFFF;
+  margin: 0 0 12px 0;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.collectionDescription {
+  font-size: 13px;
+  color: rgba(255, 255, 255, 0.75);
+  line-height: 1.6;
+  margin: 0 0 16px 0;
+}
+
+.collectionFeatures {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.feature {
+  font-size: 11px;
+  color: #00F5FF;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+/* Price Section */
+.priceSection {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px 20px;
+  background: rgba(0, 245, 255, 0.05);
+  border: 1px solid rgba(0, 245, 255, 0.2);
+}
+
+.priceLabel {
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.6);
+  font-weight: 700;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+
+.priceValue {
+  font-size: 24px;
+  font-weight: 900;
+  color: #00F5FF;
+  text-shadow: 0 0 10px rgba(0, 245, 255, 0.5);
+}
+
+/* Checkout Section */
+.checkoutSection {
+  text-align: center;
+}
+
+.checkoutButton {
+  width: 100%;
+  background: linear-gradient(90deg, #00F5FF, #00D4E0) !important;
+  border: none !important;
+  color: #000000 !important;
+  padding: 16px 24px !important;
+  font-size: 14px !important;
+  font-weight: 900 !important;
+  text-transform: uppercase !important;
+  letter-spacing: 1px !important;
+  cursor: pointer !important;
+  transition: all 0.2s ease !important;
+  box-shadow: 4px 4px 0 #000000 !important;
+}
+
+.checkoutButton:hover {
+  transform: translate(4px, 4px) !important;
+  box-shadow: none !important;
+}
+
+.checkoutHint {
+  font-size: 11px;
+  color: rgba(255, 255, 255, 0.5);
+  margin-top: 12px;
+}
+
+/* Connect Prompt */
+.connectPrompt {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.alertBox {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: rgba(255, 0, 85, 0.1);
+  border: 1px solid rgba(255, 0, 85, 0.3);
+  padding: 12px 16px;
+  color: #FF0055;
+  font-size: 13px;
+}
+
+.disabledButton {
+  width: 100%;
+  background: rgba(255, 255, 255, 0.1);
+  border: 2px solid rgba(255, 255, 255, 0.2);
+  color: rgba(255, 255, 255, 0.4);
+  padding: 16px 24px;
+  font-size: 14px;
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  cursor: not-allowed;
+}
+
+.connectHint {
+  font-size: 11px;
+  color: rgba(255, 255, 255, 0.4);
+  margin: 0;
+}
+
+/* Footer */
+.footer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 12px;
+  padding: 16px 24px;
+  background: rgba(0, 0, 0, 0.3);
+  border-top: 1px solid rgba(0, 245, 255, 0.15);
+  font-size: 10px;
+  color: rgba(255, 255, 255, 0.4);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+/* Responsive */
+@media (max-width: 520px) {
+  .modal {
+    max-width: 100%;
+    margin: 10px;
+  }
+
+  .header {
+    padding: 16px 20px;
+  }
+
+  .title {
+    font-size: 16px;
+  }
+
+  .content {
+    padding: 20px;
+  }
+
+  .collectionName {
+    font-size: 20px;
+  }
+
+  .priceValue {
+    font-size: 20px;
+  }
+}
