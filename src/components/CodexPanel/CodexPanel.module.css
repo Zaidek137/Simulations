@@ -2022,6 +2022,7 @@
   background: var(--neo-cyan);
   box-shadow: 0 0 8px var(--neo-cyan);
   animation: pulse 2s infinite;
+  will-change: opacity;
 }
 
 .ruleCardDots span:nth-child(2) {
@@ -2066,6 +2067,9 @@
   display: block;
   filter: brightness(0.9) contrast(1.1);
   max-width: 100%;
+  /* Performance optimization */
+  content-visibility: auto;
+  contain-intrinsic-size: 100% 200px;
 }
 
 .ruleCardImageOverlay {
@@ -2093,11 +2097,13 @@
   pointer-events: none;
   z-index: 2;
   animation: scanline 8s linear infinite;
+  will-change: transform;
+  transform: translateZ(0); /* GPU acceleration */
 }
 
 @keyframes scanline {
-  0% { transform: translateY(0); }
-  100% { transform: translateY(20px); }
+  0% { transform: translateY(0) translateZ(0); }
+  100% { transform: translateY(20px) translateZ(0); }
 }
 
 /* Content Section */
@@ -2179,6 +2185,7 @@
   border-radius: 50%;
   box-shadow: 0 0 10px var(--neo-gold);
   animation: pulse 1.5s infinite;
+  will-change: opacity;
 }
 
 .ruleCardMetadata {
@@ -2327,5 +2334,18 @@
 
   .ruleCardDescription {
     font-size: 11px;
+  }
+}
+
+/* Accessibility: Reduced Motion */
+@media (prefers-reduced-motion: reduce) {
+  .ruleCardDots span,
+  .ruleCardStatusDot,
+  .ruleCardImageScanline {
+    animation: none;
+  }
+  
+  .universalRuleCard {
+    transition: none;
   }
 }

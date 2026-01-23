@@ -46,29 +46,29 @@ const UNIVERSAL_LORE = [
   {
     id: 'techwear',
     title: 'Techwear',
-    description: 'Functional fashion engineered for the urban Scavenjer. Techwear blends cutting-edge materials with tactical utility—weatherproof fabrics, integrated tech pouches, and modular attachments designed for those who live on the edge of digital and physical worlds.',
-    imageUrl: 'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=800&h=600&fit=crop&q=80',
+    description: 'In Scavenjer lore, Techwear is clothing designed around fashion and advanced fabrics that embed technology. The design might be what you\'d expect of traditional techwear or it could be something completely different.',
+    imageUrl: 'https://ifps.scavenjer.com/ipfs/bafybeigr5bc5umulmf7d3zfqsrp7forrqa7yjojoldbq3vlx7gjc45bati',
     color: 'cyan' // Cyan theme
   },
   {
     id: 'drops',
     title: 'Drops',
-    description: 'Mysterious digital artifacts that manifest in physical locations across simulations. Drops contain valuable data, rare collectibles, or clues to deeper mysteries. Only licensed Scavenjers can claim them—but competition is fierce.',
-    imageUrl: 'https://images.unsplash.com/photo-1635070041078-e363dbe005cb?w=800&h=600&fit=crop&q=80',
+    description: 'Drops are mandatory events that introduce resources, information, or artifacts into the simulation. Like in our stories, drops are made for you on our Marbleverse platform.',
+    imageUrl: 'https://ifps.scavenjer.com/ipfs/bafybeialk6ab5o6kyxie4szc4giio73yiiryqstax5mmdnjdj26cxhpqke',
     color: 'magenta' // Magenta theme
   },
   {
     id: 'zaidek',
     title: 'Zaidek',
-    description: 'The enigmatic figure behind Scavenjer. Little is known about Zaidek\'s true origins or motivations. Some say they\'re an architect of simulations, others believe they\'re searching for something lost across infinite digital realms.',
-    imageUrl: 'https://images.unsplash.com/photo-1550751827-4bd374c3f58b?w=800&h=600&fit=crop&q=80',
+    description: 'Zaidek is a recurring guide across simulations. He exists to connect stories, introduce perspective shifts, and provide coherence to the Scavenjer ecosystem. He also makes content :)',
+    imageUrl: 'https://ifps.scavenjer.com/ipfs/bafybeiffy3vptgdidaurdvsdvtucta7tzbuxs23o5kzie6554bklmm6p2u',
     color: 'gold' // Gold theme
   },
   {
     id: 'music',
     title: 'Music',
-    description: 'Sound is currency in the Scavenjer universe. Music carries data, emotions, and sometimes hidden messages. The beats that pulse through simulations are more than entertainment—they\'re the heartbeat of digital existence.',
-    imageUrl: 'https://images.unsplash.com/photo-1511379938547-c1f69419868d?w=800&h=600&fit=crop&q=80',
+    description: 'Music sets emotional context for the viewer. Each sector and story uses specific sound styles to signal mood, tension, and progression, helping audiences understand what a moment is meant to feel like.',
+    imageUrl: 'https://ifps.scavenjer.com/ipfs/bafybeiga5rc7m5twjsppu3uphjewwgm7senblkj6odi7wy5nj4zsxswghi',
     color: 'navy' // Navy theme
   }
 ];
@@ -464,6 +464,8 @@ function UniversalRulesView({ glitchActive }: { glitchActive: boolean }) {
                   src={lore.imageUrl} 
                   alt={lore.title}
                   className={styles.ruleCardImage}
+                  loading="lazy"
+                  decoding="async"
                   onError={(e) => {
                     // Hide image if it fails to load
                     (e.target as HTMLImageElement).style.display = 'none';
