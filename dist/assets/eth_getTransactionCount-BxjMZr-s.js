@@ -1,2 +1,0 @@
-import{l as n,G as r}from"./index-Bbs9zcGG.js";import"./framer-motion-BLeoVWJg.js";import"./react-vendor-hc9cV1gX.js";import"./d3-vendor-DXMZTTbz.js";import"./supabase-vendor-CzrfDcjy.js";async function b(t,o){const e=await t({method:"eth_getTransactionCount",params:[o.address,o.blockNumber?n(o.blockNumber):o.blockTag||"pending"]});return r(e)}export{b as eth_getTransactionCount};
-//# sourceMappingURL=eth_getTransactionCount-BxjMZr-s.js.map

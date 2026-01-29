@@ -901,8 +901,9 @@ export function IntroDialog({ onClose, onOpenCheckout }: { onClose: () => void; 
           <div className={styles.introSection}>
             <Heart className="w-5 h-5 text-purple-400 flex-shrink-0" />
             <p>
-              Scavenjer is currently a <strong>new experimental solo project</strong> without 
-              backing. It is a passion-driven exploration of interactive storytelling and world-building. A.I is used to generate imagery but the goal is to collaborate with real artists and professionals to create the best possible experience.
+              Scavenjer is a passion-driven <strong>experimental solo project</strong> of four years in development and much longer in conception.
+              Scavenjer does not have any backing, and is a passion-driven exploration of interactive storytelling and world-building that will assist in gamifying the real world. 
+              <p>A number of artist freelancers have provided artwork for the project where the founder could afford it, and the goal is to collaborate with real artists and professionals to create the best possible experience, but A.I is used to generate certain imagery to keep the project moving forward.</p>
             </p>
           </div>
 
@@ -913,6 +914,24 @@ export function IntroDialog({ onClose, onOpenCheckout }: { onClose: () => void; 
               or support the project in other ways:
             </p>
             <div className={styles.introContact}>
+              <div className={styles.contactItem}>
+                <span className={styles.contactLabel}>Buy an Eko made with Akibaza Studio:</span>
+                <span className={styles.contactValue}>
+                  {onOpenCheckout && (
+                    <a 
+                      href="#" 
+                      onClick={(e) => {
+                        e.preventDefault();
+                        onClose();
+                        onOpenCheckout();
+                      }}
+                      className={styles.contactLink}
+                    >
+                      Buy Here
+                    </a>
+                  )}
+                </span>
+              </div>
               <div className={styles.contactItem}>
                 <span className={styles.contactLabel}>Discord:</span>
                 <span className={styles.contactValue}>
@@ -930,28 +949,6 @@ export function IntroDialog({ onClose, onOpenCheckout }: { onClose: () => void; 
                 <span className={styles.contactLabel}>Email:</span>
                 <span className={styles.contactEmail}>Zaidek@scavenjer.com</span>
               </div>
-            </div>
-          </div>
-
-          {/* Eko Support Section */}
-          <div className={styles.introSupport}>
-            <ShoppingCart className="w-5 h-5 flex-shrink-0" style={{ color: '#00F5FF' }} />
-            <div>
-              <p>
-                <strong>Support by buying an Eko collectible</strong>, made by real artists 
-                at Akibaza Studio.
-              </p>
-              {onOpenCheckout && (
-                <button 
-                  onClick={() => {
-                    onClose();
-                    onOpenCheckout();
-                  }}
-                  className={styles.introSupportButton}
-                >
-                  Get an Eko Collectible
-                </button>
-              )}
             </div>
           </div>
         </div>
