@@ -1,0 +1,1012 @@
+/* ====================================
+   THE INDEX - MINIMAL FUTURISM + NEOBRUTALISM
+   ==================================== */
+
+/* CSS Variables */
+:root {
+  --cs-bg: #f5f7fa;
+  --cs-bg-dark: #0a0a0f;
+  --cs-text: #1a1a2e;
+  --cs-text-light: rgba(255, 255, 255, 0.9);
+  --cs-text-muted: rgba(255, 255, 255, 0.5);
+  --cs-cyan: #00F5FF;
+  --cs-magenta: #FF0055;
+  --cs-gold: #FFD700;
+  --cs-black: #000000;
+  --cs-border: rgba(0, 245, 255, 0.2);
+  --cs-glow: 0 0 30px rgba(0, 245, 255, 0.3);
+  
+  /* Neobrutalism elements */
+  --neo-shadow: 6px 6px 0 var(--cs-black);
+  --neo-shadow-small: 3px 3px 0 var(--cs-black);
+  --neo-shadow-cyan: 4px 4px 0 var(--cs-cyan);
+  --neo-border: 3px solid var(--cs-black);
+  --neo-border-thick: 4px solid var(--cs-black);
+}
+
+/* ====================================
+   ANIMATIONS
+   ==================================== */
+@keyframes glitch-text {
+  0% {
+    text-shadow: 2px 0 var(--cs-cyan), -2px 0 var(--cs-magenta);
+    transform: translate(0);
+  }
+  25% {
+    text-shadow: -2px 0 var(--cs-magenta), 2px 0 var(--cs-cyan);
+    transform: translate(-1px, 0);
+  }
+  50% {
+    text-shadow: 2px 0 var(--cs-cyan), -2px 0 var(--cs-magenta);
+    transform: translate(1px, 0);
+  }
+  75% {
+    text-shadow: -2px 0 var(--cs-magenta), 2px 0 var(--cs-cyan);
+    transform: translate(-1px, 0);
+  }
+  100% {
+    text-shadow: 2px 0 var(--cs-cyan), -2px 0 var(--cs-magenta);
+    transform: translate(0);
+  }
+}
+
+@keyframes scanline {
+  0% {
+    transform: translateY(-100%);
+  }
+  100% {
+    transform: translateY(200%);
+  }
+}
+
+@keyframes digital-flicker {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.95;
+  }
+}
+
+@keyframes pulse-border {
+  0%, 100% {
+    box-shadow: 0 0 0 0 rgba(0, 245, 255, 0.7);
+  }
+  50% {
+    box-shadow: 0 0 0 4px rgba(0, 245, 255, 0);
+  }
+}
+
+@keyframes slide-up {
+  from {
+    transform: translateY(10px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* ====================================
+   PAGE CONTAINER
+   ==================================== */
+.pageContainer {
+  min-height: 100vh;
+  background: linear-gradient(180deg, #f8f9fc 0%, #e8ecf4 100%);
+  position: relative;
+  overflow: hidden;
+  padding-top: 100px;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Subtle grid pattern */
+.pageContainer::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-image: 
+    linear-gradient(rgba(0, 0, 0, 0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0, 0, 0, 0.03) 1px, transparent 1px);
+  background-size: 40px 40px;
+  pointer-events: none;
+  animation: digital-flicker 10s infinite;
+}
+
+/* Scanline effect overlay */
+.pageContainer::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(
+    to bottom,
+    transparent 0%,
+    rgba(0, 245, 255, 0.03) 50%,
+    transparent 100%
+  );
+  height: 100px;
+  animation: scanline 8s linear infinite;
+  pointer-events: none;
+  z-index: 100;
+}
+
+/* ====================================
+   HEADER - NEOBRUTALISM TITLE
+   ==================================== */
+.header {
+  position: fixed;
+  top: 30px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 999;
+  padding: 0;
+  margin-top: 0;
+}
+
+.title {
+  font-family: 'Orbitron', 'Rajdhani', system-ui, -apple-system, sans-serif;
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--cs-text);
+  letter-spacing: 8px;
+  text-transform: uppercase;
+  padding: 0.625rem 1.25rem;
+  background: var(--cs-bg);
+  border: var(--neo-border);
+  box-shadow: var(--neo-shadow);
+  animation: glitch-text 3s infinite;
+  position: relative;
+}
+
+.title::before {
+  content: 'THE INDEX';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--cs-cyan);
+  opacity: 0.3;
+  animation: glitch-text 5s infinite reverse;
+  pointer-events: none;
+}
+
+.backButton {
+  display: none;
+}
+
+/* ====================================
+   FILTER MENU WRAPPER (CENTERED ABOVE)
+   ==================================== */
+.filterMenuWrapper {
+  display: flex;
+  justify-content: center;
+  padding: 0 2rem 1.5rem;
+  max-width: 1400px;
+  margin: 0 auto;
+  position: relative;
+  z-index: 50;
+}
+
+/* ====================================
+   MAIN CONTENT LAYOUT
+   ==================================== */
+.mainContent {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 3rem;
+  padding: 0.5rem 3rem 1.5rem;
+  flex: 1;
+  max-width: 1800px;
+  margin: 0 auto;
+  position: relative;
+  z-index: 10;
+  min-height: calc(100vh - 180px);
+}
+
+/* ====================================
+   SLIDER SECTION
+   ==================================== */
+.sliderSection {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  max-width: 800px;
+  animation: slide-up 0.6s ease-out;
+}
+
+/* ====================================
+   FILTER MENU - NEOBRUTALISM STYLE
+   ==================================== */
+.filterMenu {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+  width: 100%;
+  padding: 1rem;
+  background: rgba(255, 255, 255, 0.9);
+  border: var(--neo-border);
+  box-shadow: var(--neo-shadow);
+  position: relative;
+}
+
+.filterHeader {
+  font-family: 'Orbitron', sans-serif;
+  font-size: 0.875rem;
+  font-weight: 700;
+  text-align: center;
+  text-transform: uppercase;
+  letter-spacing: 3px;
+  color: var(--cs-text);
+  margin-bottom: 0.75rem;
+  padding: 0.5rem;
+  background: var(--cs-black);
+  color: white;
+  border-radius: 4px;
+  box-shadow: var(--neo-shadow-small);
+}
+
+/* Glitch corner effect */
+.filterMenu::before {
+  content: '';
+  position: absolute;
+  top: -3px;
+  right: -3px;
+  width: 20px;
+  height: 20px;
+  background: var(--cs-cyan);
+  clip-path: polygon(100% 0, 100% 100%, 0 0);
+}
+
+.filterRow {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.filterLabel {
+  font-family: 'Orbitron', 'Rajdhani', system-ui, sans-serif;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--cs-text);
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  margin-right: 0.5rem;
+  padding: 0.25rem 0.75rem;
+  background: var(--cs-black);
+  color: white;
+  border: 2px solid var(--cs-black);
+}
+
+.filterButton {
+  padding: 0.5rem 1.25rem;
+  background: white;
+  border: 3px solid var(--cs-black);
+  font-family: 'Orbitron', 'Rajdhani', system-ui, sans-serif;
+  font-size: 0.8125rem;
+  font-weight: 500;
+  color: var(--cs-text);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  box-shadow: 3px 3px 0 var(--cs-black);
+  position: relative;
+}
+
+.filterButton:hover {
+  transform: translate(1px, 1px);
+  box-shadow: 2px 2px 0 var(--cs-black);
+  background: var(--cs-cyan);
+  animation: digital-flicker 0.3s;
+}
+
+.filterButtonActive {
+  background: var(--cs-cyan);
+  transform: translate(3px, 3px);
+  box-shadow: 0 0 0 var(--cs-black);
+  animation: pulse-border 2s infinite;
+}
+
+.filterButtonActive::after {
+  content: '';
+  position: absolute;
+  top: -2px;
+  right: -2px;
+  width: 6px;
+  height: 6px;
+  background: var(--cs-magenta);
+  animation: digital-flicker 1s infinite;
+}
+
+/* Back Button */
+.filterBackButton {
+  padding: 0.5rem 1rem;
+  background: white;
+  border: 3px solid var(--cs-black);
+  font-family: 'Orbitron', sans-serif;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--cs-text);
+  cursor: pointer;
+  box-shadow: 3px 3px 0 var(--cs-black);
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  transition: all 0.2s ease;
+}
+
+.filterBackButton:hover {
+  transform: translate(1px, 1px);
+  box-shadow: 2px 2px 0 var(--cs-black);
+  background: var(--cs-cyan);
+  animation: digital-flicker 0.3s;
+}
+
+/* ====================================
+   SLIDER
+   ==================================== */
+.cardSlider {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  width: 100%;
+  justify-content: center;
+  position: relative;
+}
+
+.sliderArrow {
+  width: 44px;
+  height: 44px;
+  background: white;
+  border: var(--neo-border);
+  color: var(--cs-text);
+  font-size: 1.5rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  box-shadow: var(--neo-shadow-small);
+  position: relative;
+}
+
+.sliderArrow:hover:not(:disabled) {
+  transform: translate(2px, 2px);
+  box-shadow: 1px 1px 0 var(--cs-black);
+  background: var(--cs-cyan);
+  animation: digital-flicker 0.2s;
+}
+
+.sliderArrow:disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+}
+
+.sliderTrack {
+  display: flex;
+  gap: 1.75rem;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+}
+
+.cardWrapper {
+  transition: all 0.3s ease;
+  position: relative;
+}
+
+/* Description Panel - Neobrutalism */
+.descriptionPanel {
+  width: 100%;
+  max-width: 700px;
+  margin-top: 1.5rem;
+  padding: 1.25rem 1.75rem;
+  background: rgba(255, 255, 255, 0.95);
+  border: var(--neo-border);
+  box-shadow: var(--neo-shadow);
+  position: relative;
+}
+
+.descriptionPanel::after {
+  content: '';
+  position: absolute;
+  bottom: -3px;
+  left: -3px;
+  width: 30px;
+  height: 30px;
+  background: var(--cs-magenta);
+  clip-path: polygon(0 100%, 100% 100%, 0 0);
+}
+
+.descriptionText {
+  font-family: 'Orbitron', 'Rajdhani', 'Share Tech Mono', monospace;
+  font-size: 1.1rem;
+  line-height: 1.8;
+  font-weight: 300;
+  color: var(--cs-text);
+  text-align: center;
+  letter-spacing: 0.5px;
+  animation: digital-flicker 8s infinite;
+}
+
+.descriptionEmpty {
+  color: rgba(0, 0, 0, 0.3);
+  font-family: 'Orbitron', 'Rajdhani', 'Share Tech Mono', monospace;
+  font-style: normal;
+  font-size: 0.95rem;
+  text-align: center;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+}
+
+/* ====================================
+   CHARACTER CARD - NEOBRUTALISM
+   ==================================== */
+.characterCard {
+  position: relative;
+  width: 220px;
+  aspect-ratio: 3/4;
+  border: var(--neo-border);
+  cursor: pointer;
+  overflow: hidden;
+  transition: all 0.3s ease;
+  flex-shrink: 0;
+  box-shadow: var(--neo-shadow);
+  background: white;
+}
+
+.characterCard:hover {
+  transform: translate(3px, 3px);
+  box-shadow: 3px 3px 0 var(--cs-black);
+  animation: digital-flicker 0.3s;
+}
+
+.cardBorder {
+  position: absolute;
+  inset: 0;
+  padding: 3px;
+  background: var(--tier-border);
+  opacity: 0.8;
+  transition: opacity 0.3s ease;
+  z-index: 1;
+  pointer-events: none;
+}
+
+.cardBorder::before {
+  content: '';
+  position: absolute;
+  inset: 3px;
+  background: #1a1a2e;
+}
+
+.characterCardSelected {
+  transform: translate(6px, 6px);
+  box-shadow: 0 0 0 var(--cs-black);
+  animation: pulse-border 2s infinite;
+}
+
+.characterCardSelected .cardBorder {
+  opacity: 1;
+  animation: digital-flicker 2s infinite;
+}
+
+/* Glitch corner on selected */
+.characterCardSelected::before {
+  content: '';
+  position: absolute;
+  top: -3px;
+  right: -3px;
+  width: 15px;
+  height: 15px;
+  background: var(--cs-cyan);
+  clip-path: polygon(100% 0, 100% 100%, 0 0);
+  z-index: 10;
+  animation: digital-flicker 1s infinite;
+}
+
+.cardInner {
+  position: relative;
+  height: 100%;
+  overflow: hidden;
+  z-index: 2;
+  background: linear-gradient(180deg, #1a1a2e 0%, #0f0f1a 100%);
+}
+
+/* Card Image */
+.cardImageArea {
+  position: relative;
+  height: 100%;
+  overflow: hidden;
+}
+
+.cardImage {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.5s ease;
+  image-rendering: -webkit-optimize-contrast;
+  image-rendering: crisp-edges;
+  backface-visibility: hidden;
+  transform: translateZ(0);
+}
+
+.characterCard:hover .cardImage {
+  transform: scale(1.05);
+  animation: digital-flicker 0.5s;
+}
+
+.cardPlaceholder {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #2a2a4e 0%, #1a1a2e 100%);
+}
+
+.placeholderIcon {
+  font-size: 4rem;
+  opacity: 0.4;
+}
+
+/* Card Name Overlay */
+.cardInfo {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: 1.25rem 1rem 1rem;
+  background: linear-gradient(0deg, rgba(0, 0, 0, 0.95) 0%, rgba(0, 0, 0, 0.7) 60%, transparent 100%);
+}
+
+.cardName {
+  font-size: 1.05rem;
+  font-weight: 600;
+  color: #fff;
+  margin: 0;
+  text-align: center;
+  letter-spacing: 1px;
+  text-shadow: 2px 2px 0 var(--cs-black);
+}
+
+/* Hidden elements */
+.cardTierBadge,
+.cardStatus,
+.cardFaction,
+.cardRole,
+.cardStats,
+.selectedIndicator {
+  display: none;
+}
+
+/* ====================================
+   2D CHARACTER DISPLAY - TRANSPARENT FLOATING
+   ==================================== */
+.displayContainer {
+  width: 550px;
+  height: 600px;
+  background: transparent;
+  border: none;
+  box-shadow: none;
+  position: relative;
+  overflow: visible;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+/* Subtle radial glow behind character */
+.displayContainer::before {
+  content: '';
+  position: absolute;
+  width: 80%;
+  height: 80%;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: radial-gradient(
+    ellipse at center,
+    rgba(0, 245, 255, 0.12) 0%,
+    rgba(255, 0, 85, 0.08) 40%,
+    transparent 70%
+  );
+  filter: blur(40px);
+  pointer-events: none;
+  animation: pulse-glow 4s ease-in-out infinite;
+}
+
+/* Secondary glow layer for depth */
+.displayContainer::after {
+  content: '';
+  position: absolute;
+  width: 60%;
+  height: 60%;
+  bottom: 10%;
+  left: 50%;
+  transform: translateX(-50%);
+  background: radial-gradient(
+    ellipse at center bottom,
+    rgba(0, 245, 255, 0.15) 0%,
+    transparent 60%
+  );
+  filter: blur(30px);
+  pointer-events: none;
+}
+
+@keyframes pulse-glow {
+  0%, 100% { opacity: 0.8; transform: translate(-50%, -50%) scale(1); }
+  50% { opacity: 1; transform: translate(-50%, -50%) scale(1.05); }
+}
+
+.displayImage {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+  filter: 
+    drop-shadow(0 12px 40px rgba(0, 0, 0, 0.25))
+    drop-shadow(0 6px 20px rgba(0, 245, 255, 0.3))
+    drop-shadow(0 3px 10px rgba(255, 0, 85, 0.2))
+    drop-shadow(0 0 60px rgba(0, 245, 255, 0.15));
+  animation: float-character 6s ease-in-out infinite;
+  position: relative;
+  z-index: 2;
+}
+
+@keyframes float-character {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-8px); }
+}
+
+.displayPlaceholder {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  color: rgba(0, 0, 0, 0.4);
+  text-align: center;
+  padding: 2rem;
+  background: rgba(255, 255, 255, 0.5);
+  border-radius: 12px;
+  backdrop-filter: blur(8px);
+}
+
+.displayPlaceholder .placeholderIcon {
+  font-size: 4rem;
+  opacity: 0.4;
+  filter: grayscale(100%);
+}
+
+.displayPlaceholder .placeholderText {
+  font-family: 'Orbitron', sans-serif;
+  font-size: 1rem;
+  font-weight: 500;
+  margin: 0;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+}
+
+.displayPlaceholder .placeholderHint {
+  font-family: 'Rajdhani', sans-serif;
+  font-size: 0.875rem;
+  margin: 0;
+  opacity: 0.6;
+}
+
+/* Deprecated 3D Scene Styles (keeping for reference) */
+.sceneContainer {
+  width: 550px;
+  height: 600px;
+  background: linear-gradient(135deg, #f0f4f8 0%, #e4e9f0 100%);
+  border: var(--neo-border-thick);
+  box-shadow: var(--neo-shadow);
+  position: relative;
+  overflow: visible;
+  display: flex;
+  flex-direction: column;
+  flex-shrink: 0;
+}
+
+/* Digital corner accent */
+.sceneContainer::before {
+  content: '';
+  position: absolute;
+  top: -4px;
+  left: -4px;
+  width: 40px;
+  height: 40px;
+  background: var(--cs-magenta);
+  clip-path: polygon(0 0, 100% 0, 0 100%);
+  z-index: 2;
+  animation: digital-flicker 3s infinite;
+}
+
+/* Bottom corner accent */
+.sceneContainer::after {
+  content: '';
+  position: absolute;
+  bottom: -4px;
+  right: -4px;
+  width: 40px;
+  height: 40px;
+  background: var(--cs-cyan);
+  clip-path: polygon(100% 0, 100% 100%, 0 100%);
+  z-index: 2;
+  animation: digital-flicker 4s infinite;
+}
+
+.canvas {
+  flex: 1;
+  min-height: 100%;
+  animation: digital-flicker 10s infinite;
+}
+
+.placeholderIndicator {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  padding: 0.375rem 0.75rem;
+  background: var(--cs-black);
+  color: white;
+  border: 2px solid var(--cs-cyan);
+  font-family: 'Orbitron', monospace;
+  font-size: 0.625rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  z-index: 10;
+  animation: digital-flicker 2s infinite;
+}
+
+/* ====================================
+   LOADING STATE
+   ==================================== */
+.loadingContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  background: linear-gradient(180deg, #f8f9fc 0%, #e8ecf4 100%);
+}
+
+.loadingSpinner {
+  width: 48px;
+  height: 48px;
+  border: 4px solid var(--cs-black);
+  border-top-color: var(--cs-cyan);
+  animation: spin 0.8s linear infinite;
+  margin-bottom: 1rem;
+  box-shadow: var(--neo-shadow-small);
+}
+
+.loadingText {
+  font-family: 'Orbitron', monospace;
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--cs-text);
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  animation: glitch-text 3s infinite;
+}
+
+/* ====================================
+   EMPTY STATE
+   ==================================== */
+.emptyState {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  color: rgba(0, 0, 0, 0.4);
+  text-align: center;
+  padding: 2rem;
+}
+
+/* Coming Soon Message */
+.comingSoonMessage {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 4rem 2rem;
+  width: 100%;
+}
+
+.comingSoonText {
+  font-family: 'Orbitron', 'Rajdhani', system-ui, sans-serif;
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: var(--cs-text);
+  letter-spacing: 4px;
+  text-transform: uppercase;
+  text-align: center;
+  padding: 1rem 2rem;
+  background: white;
+  border: var(--neo-border);
+  box-shadow: var(--neo-shadow);
+  animation: glitch-text 4s infinite;
+}
+
+/* ====================================
+   RESPONSIVE
+   ==================================== */
+
+/* Tablet landscape and smaller desktops */
+@media (max-width: 1100px) {
+  .mainContent {
+    flex-direction: column;
+    align-items: center;
+    padding: 1.5rem;
+    gap: 2rem;
+  }
+  
+  .displayContainer {
+    width: 450px;
+    height: 500px;
+    order: -1;
+  }
+  
+  .sceneContainer {
+    width: 100%;
+    max-width: 450px;
+    height: 400px;
+    order: -1;
+  }
+  
+  .sliderSection {
+    max-width: 100%;
+    width: 100%;
+  }
+  
+  .cardSlider {
+    justify-content: center;
+  }
+}
+
+/* Tablet portrait */
+@media (max-width: 768px) {
+  .pageContainer {
+    padding-top: 80px;
+  }
+  
+  .displayContainer {
+    width: 380px;
+    height: 450px;
+  }
+  
+  .characterCard {
+    width: 200px;
+  }
+  
+  .filterRow {
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+  
+  .descriptionPanel {
+    max-width: 100%;
+  }
+}
+
+/* Mobile */
+@media (max-width: 600px) {
+  .pageContainer {
+    padding-top: 70px;
+  }
+  
+  .header {
+    padding: 1rem;
+    margin-top: 0;
+  }
+  
+  .title {
+    font-size: 1rem;
+    padding: 0.375rem 1rem;
+    letter-spacing: 4px;
+  }
+  
+  .mainContent {
+    padding: 1rem;
+    gap: 1.5rem;
+  }
+  
+  .displayContainer {
+    width: 100%;
+    max-width: 320px;
+    height: 380px;
+  }
+  
+  .characterCard {
+    width: 160px;
+  }
+  
+  .sliderTrack {
+    gap: 0.75rem;
+  }
+  
+  .sliderArrow {
+    width: 36px;
+    height: 36px;
+  }
+  
+  .sceneContainer {
+    height: 350px;
+  }
+  
+  .filterMenu {
+    padding: 0.875rem;
+  }
+  
+  .filterHeader {
+    font-size: 0.75rem;
+    letter-spacing: 2px;
+  }
+  
+  .filterButton {
+    padding: 0.375rem 0.75rem;
+    font-size: 0.7rem;
+  }
+  
+  .filterBackButton {
+    font-size: 0.7rem;
+    padding: 0.375rem 0.75rem;
+  }
+  
+  .descriptionPanel {
+    padding: 1rem;
+    margin-top: 1rem;
+  }
+  
+  .descriptionText {
+    font-size: 0.875rem;
+  }
+}
+
+/* Small mobile */
+@media (max-width: 400px) {
+  .displayContainer {
+    max-width: 280px;
+    height: 320px;
+  }
+  
+  .characterCard {
+    width: 140px;
+  }
+  
+  .sliderArrow {
+    width: 32px;
+    height: 32px;
+  }
+  
+  .title {
+    font-size: 0.875rem;
+    letter-spacing: 3px;
+  }
+}

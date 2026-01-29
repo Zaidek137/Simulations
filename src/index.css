@@ -61,9 +61,7 @@ code {
   background-size: 200% 100%;
   animation: skeletonShimmer 1.5s ease-in-out infinite;
   border-radius: 8px;
-}
-
-@keyframes skeletonShimmer {
+}@keyframes skeletonShimmer {
   0% {
     background-position: 200% 0;
   }
@@ -101,4 +99,3 @@ main {
     opacity: 1;
   }
 }
-

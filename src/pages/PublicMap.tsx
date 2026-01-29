@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from "react";
 import UniverseMap from "@/components/UniverseMap/UniverseMap";
 import LocalPointOverlay from "@/components/LocalPointOverlay/LocalPointOverlay";
 import CodexPanel, { IntroDialog } from "@/components/CodexPanel/CodexPanel";
+import CrossmintCheckoutModal from "@/components/CrossmintCheckoutModal/CrossmintCheckoutModal";
 import { Region, Location, UNIVERSE_DATA, CONFIG, UniverseConfig } from "@/data/universe-data";
 import { fetchSimulations, fetchLoreConfig } from "@/lib/supabase";
 import type { CodexEntry } from "@/data/codex-types";
@@ -16,6 +17,7 @@ export default function PublicMap() {
   const [isLoading, setIsLoading] = useState(true);
   const [selectedCodexEntry, setSelectedCodexEntry] = useState<CodexEntry | null>(null);
   const [showIntro, setShowIntro] = useState(false);
+  const [showCheckoutModal, setShowCheckoutModal] = useState(false);
   const zoomResetRef = useRef<(() => void) | null>(null);
 
   // Check if intro should be shown (24-hour persistence)
@@ -229,8 +231,17 @@ export default function PublicMap() {
     <main>
       {/* Intro Dialog */}
       {showIntro && (
-        <IntroDialog onClose={handleCloseIntro} />
+        <IntroDialog 
+          onClose={handleCloseIntro} 
+          onOpenCheckout={() => setShowCheckoutModal(true)}
+        />
       )}
+
+      {/* Crossmint Checkout Modal */}
+      <CrossmintCheckoutModal 
+        isOpen={showCheckoutModal} 
+        onClose={() => setShowCheckoutModal(false)} 
+      />
 
       <UniverseMap
         onRegionSelect={setSelectedRegion}

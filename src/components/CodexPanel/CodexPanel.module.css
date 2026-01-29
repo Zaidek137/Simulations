@@ -1646,6 +1646,54 @@
     inset 0 1px 2px rgba(0, 0, 0, 0.3);
 }
 
+/* Eko Support Section */
+.introSupport {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  padding: 20px;
+  background: rgba(0, 245, 255, 0.08);
+  border-radius: 16px;
+  border: 1px solid rgba(0, 245, 255, 0.25);
+  margin-top: 20px;
+}
+
+.introSupport p {
+  font-size: 14px;
+  color: rgba(255, 255, 255, 0.9);
+  line-height: 1.6;
+  margin: 0 0 12px 0;
+}
+
+.introSupport strong {
+  color: #00F5FF;
+}
+
+.introSupportButton {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 20px;
+  background: linear-gradient(135deg, #00F5FF 0%, #00D4E0 100%);
+  color: #0D1B2A;
+  border: none;
+  border-radius: 10px;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 
+    0 4px 15px rgba(0, 245, 255, 0.3),
+    0 0 20px rgba(0, 245, 255, 0.15);
+}
+
+.introSupportButton:hover {
+  transform: translateY(-2px);
+  box-shadow: 
+    0 6px 25px rgba(0, 245, 255, 0.4),
+    0 0 30px rgba(0, 245, 255, 0.25);
+}
+
 .introFooter {
   padding: 24px 36px 36px 36px;
   display: flex;
@@ -1760,6 +1808,21 @@
   .introButtonPrimary {
     width: 100%;
     text-align: center;
+  }
+
+  .introSupport {
+    padding: 16px;
+    gap: 12px;
+  }
+
+  .introSupport p {
+    font-size: 13px;
+  }
+
+  .introSupportButton {
+    width: 100%;
+    justify-content: center;
+    padding: 12px 16px;
   }
 
   .toggleButton {

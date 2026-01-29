@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from 'react';
 import { useActiveAccount } from 'thirdweb/react';
 import AdminPortal from '@/components/AdminPortal/AdminPortal';
 import CodexAdmin from '@/components/CodexAdmin/CodexAdmin';
+import CharacterAdmin from '@/components/CharacterAdmin/CharacterAdmin';
 import UniverseMap from '@/components/UniverseMap/UniverseMap';
 import LocalPointOverlay from '@/components/LocalPointOverlay/LocalPointOverlay';
 import { Region, Location, UNIVERSE_DATA, CONFIG, UniverseConfig } from '@/data/universe-data';
@@ -10,7 +11,7 @@ import { isAdminWallet, MASTER_ADMIN_WALLET } from '@/admin/constants';
 import { useNavigate } from 'react-router-dom';
 import { Shield, AlertTriangle, Wallet } from 'lucide-react';
 
-type AdminTab = 'universes' | 'codex';
+type AdminTab = 'universes' | 'codex' | 'characters';
 
 export default function AdminPage() {
   const account = useActiveAccount();
@@ -297,6 +298,16 @@ export default function AdminPage() {
               >
                 📖 Codex
               </button>
+              <button
+                onClick={() => setActiveTab('characters')}
+                className={`px-4 py-2 text-sm rounded-lg transition-all font-semibold ${
+                  activeTab === 'characters'
+                    ? 'bg-indigo-600 text-white'
+                    : 'bg-white/5 text-gray-300 hover:bg-white/10'
+                }`}
+              >
+                👤 Characters
+              </button>
             </div>
           </div>
           <div className="flex items-center gap-3">
@@ -322,10 +333,12 @@ export default function AdminPage() {
             pickedCoords={pickedCoords}
             onPickingStateChange={setIsPicking}
           />
-        ) : (
+        ) : activeTab === 'codex' ? (
           <div className="h-full p-6">
             <CodexAdmin simulationData={universeData} />
           </div>
+        ) : (
+          <CharacterAdmin />
         )}
       </div>
     </div>

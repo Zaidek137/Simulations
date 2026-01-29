@@ -1,0 +1,71 @@
+/* Neobrutalism Variables */
+:root {
+  --neo-navy: #0D1B2A;
+  --neo-black: #000000;
+  --neo-cyan: #00F5FF;
+  --neo-magenta: #FF0055;
+  --neo-white: #FFFFFF;
+  --neo-shadow: 4px 4px 0 var(--neo-black);
+  --neo-shadow-cyan: 4px 4px 0 var(--neo-cyan);
+  --neo-border: 4px solid var(--neo-black);
+}
+
+.indexButton {
+  position: fixed;
+  top: 30px;
+  left: 210px;
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: var(--neo-cyan);
+  border: var(--neo-border);
+  border-radius: 0;
+  color: var(--neo-black);
+  font-family: 'Courier New', monospace;
+  font-weight: 900;
+  font-size: 0.875rem;
+  letter-spacing: 2px;
+  padding: 0.75rem 1.5rem;
+  min-height: 50px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  box-shadow: var(--neo-shadow);
+  text-transform: uppercase;
+}
+
+.indexButton:hover {
+  transform: translate(2px, 2px);
+  box-shadow: 2px 2px 0 var(--neo-black);
+  background: var(--neo-magenta);
+  color: var(--neo-white);
+}
+
+.indexButton:active {
+  transform: translate(4px, 4px);
+  box-shadow: none;
+}
+
+.icon {
+  flex-shrink: 0;
+}
+
+.text {
+  white-space: nowrap;
+}
+
+/* Responsive - hide text on smaller screens */
+@media (max-width: 768px) {
+  .indexButton {
+    left: 180px;
+    padding: 0.5rem 1rem;
+    gap: 0.25rem;
+    min-height: 44px;
+    font-size: 0.75rem;
+  }
+  
+  .icon {
+    width: 18px;
+    height: 18px;
+  }
+}

@@ -46,7 +46,7 @@ const UNIVERSAL_LORE = [
   {
     id: 'techwear',
     title: 'Techwear',
-    description: 'In Scavenjer lore, Techwear is clothing designed around fashion and advanced fabrics that embed technology. The design might be what you\'d expect of traditional techwear or it could be something completely different.',
+    description: 'Lots of unnecessary straps and hanging fabric! In Scavenjer lore, Techwear is clothing designed around fashion and advanced fabrics that embed technology. The design might be what you\'d expect of traditional techwear or it could be something completely different.',
     imageUrl: 'https://ifps.scavenjer.com/ipfs/bafybeigr5bc5umulmf7d3zfqsrp7forrqa7yjojoldbq3vlx7gjc45bati',
     color: 'cyan' // Cyan theme
   },
@@ -867,7 +867,7 @@ function SimulationCategoriesView({ simulation, allEntries, glitchActive, onEntr
 }
 
 // Intro Dialog Component - Exported for use in PublicMap
-export function IntroDialog({ onClose }: { onClose: () => void }) {
+export function IntroDialog({ onClose, onOpenCheckout }: { onClose: () => void; onOpenCheckout?: () => void }) {
   return (
     <motion.div
       className={styles.introOverlay}
@@ -930,6 +930,28 @@ export function IntroDialog({ onClose }: { onClose: () => void }) {
                 <span className={styles.contactLabel}>Email:</span>
                 <span className={styles.contactEmail}>Zaidek@scavenjer.com</span>
               </div>
+            </div>
+          </div>
+
+          {/* Eko Support Section */}
+          <div className={styles.introSupport}>
+            <ShoppingCart className="w-5 h-5 flex-shrink-0" style={{ color: '#00F5FF' }} />
+            <div>
+              <p>
+                <strong>Support by buying an Eko collectible</strong>, made by real artists 
+                at Akibaza Studio.
+              </p>
+              {onOpenCheckout && (
+                <button 
+                  onClick={() => {
+                    onClose();
+                    onOpenCheckout();
+                  }}
+                  className={styles.introSupportButton}
+                >
+                  Get an Eko Collectible
+                </button>
+              )}
             </div>
           </div>
         </div>
