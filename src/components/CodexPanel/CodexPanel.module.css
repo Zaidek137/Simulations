@@ -1474,8 +1474,9 @@
   backdrop-filter: blur(20px) saturate(180%);
   border: 3px solid rgba(0, 245, 255, 0.6);
   border-radius: 28px;
-  max-width: 600px;
+  max-width: 750px;
   width: 100%;
+  max-height: calc(100vh - 80px);
   box-shadow: 
     0 0 20px rgba(0, 245, 255, 0.3),
     0 0 40px rgba(0, 245, 255, 0.2),
@@ -1483,6 +1484,8 @@
     0 16px 64px rgba(0, 0, 0, 0.3),
     inset 0 1px 1px rgba(255, 255, 255, 0.1);
   overflow: hidden;
+  display: flex;
+  flex-direction: column;
   animation: float 6s ease-in-out infinite, slow-glow 4s ease-in-out infinite;
 }
 
@@ -1493,6 +1496,7 @@
   border-bottom: 1px solid rgba(232, 238, 242, 0.2);
   position: relative;
   overflow: hidden;
+  flex-shrink: 0;
 }
 
 .introHeader::before {
@@ -1544,6 +1548,29 @@
   display: flex;
   flex-direction: column;
   gap: 28px;
+  overflow-y: auto;
+  flex: 1;
+  min-height: 0;
+}
+
+/* Custom scrollbar for intro content */
+.introContent::-webkit-scrollbar {
+  width: 8px;
+}
+
+.introContent::-webkit-scrollbar-track {
+  background: rgba(0, 0, 0, 0.3);
+  border-radius: 4px;
+}
+
+.introContent::-webkit-scrollbar-thumb {
+  background: rgba(0, 245, 255, 0.4);
+  border-radius: 4px;
+  transition: background 0.3s ease;
+}
+
+.introContent::-webkit-scrollbar-thumb:hover {
+  background: rgba(0, 245, 255, 0.6);
 }
 
 .introSection {
@@ -1699,6 +1726,9 @@
   display: flex;
   gap: 14px;
   justify-content: flex-end;
+  flex-shrink: 0;
+  border-top: 1px solid rgba(232, 238, 242, 0.1);
+  background: linear-gradient(180deg, rgba(13, 27, 42, 0.5) 0%, rgba(13, 27, 42, 0.8) 100%);
 }
 
 .introButtonSecondary {
@@ -1779,6 +1809,7 @@
 
   .introDialog {
     max-width: 100%;
+    max-height: calc(100vh - 40px);
     border-radius: 20px;
   }
 

@@ -32,9 +32,7 @@ code {
 
 /* ================================
    LOADING & TRANSITION UTILITIES
-   ================================ */
-
-/* Content fade-in animation */
+   ================================ *//* Content fade-in animation */
 .fade-in {
   animation: contentFadeIn 0.4s ease-out forwards;
 }
