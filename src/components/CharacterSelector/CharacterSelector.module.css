@@ -552,6 +552,8 @@
   image-rendering: crisp-edges;
   backface-visibility: hidden;
   transform: translateZ(0);
+  will-change: transform;
+  content-visibility: auto;
 }
 
 .characterCard:hover .cardImage {
@@ -591,6 +593,54 @@
   text-align: center;
   letter-spacing: 1px;
   text-shadow: 2px 2px 0 var(--cs-black);
+}
+
+/* RESONANTS Tags */
+.resonantTags {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  margin-top: 0.5rem;
+  font-size: 0.7rem;
+}
+
+.genreTag,
+.energyTag {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.25rem 0.5rem;
+  background: rgba(0, 245, 255, 0.15);
+  border: 1px solid rgba(0, 245, 255, 0.4);
+  border-radius: 4px;
+  font-family: 'Orbitron', monospace;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.genreIcon,
+.energyIcon {
+  font-size: 0.8rem;
+  color: #00F5FF;
+}
+
+.genreText,
+.energyText {
+  font-size: 0.65rem;
+  color: rgba(255, 255, 255, 0.9);
+  font-weight: 600;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.energyTag {
+  background: rgba(255, 0, 85, 0.15);
+  border-color: rgba(255, 0, 85, 0.4);
+}
+
+.energyIcon {
+  color: #FF0055;
 }
 
 /* Hidden elements */
@@ -675,6 +725,7 @@
   animation: float-character 6s ease-in-out infinite;
   position: relative;
   z-index: 2;
+  will-change: transform;
 }
 
 @keyframes float-character {

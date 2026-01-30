@@ -11,7 +11,7 @@ import { MOCK_INDEX_ENTRIES } from '@/data/characterData';
 import styles from './CharacterAdmin.module.css';
 
 const SIMULATIONS: Simulation[] = ['Resonance', 'Prime', 'Veliental Ascendance'];
-const INDEX_TYPES: IndexType[] = ['Characters', 'ZIBBots', 'Environments'];
+const INDEX_TYPES: IndexType[] = ['Scavenjers', 'RESONANTS', 'ZIBBots', 'Environments'];
 
 const FACTIONS = [
   'Resonant',
@@ -26,7 +26,7 @@ const FACTIONS = [
 const getEmptyEntry = (): Omit<IndexEntry, 'id'> => ({
   name: '',
   simulation: 'Resonance',
-  type: 'Characters',
+  type: 'Scavenjers',
   faction: 'Resonant',
   description: '',
 });
@@ -346,6 +346,49 @@ export default function CharacterAdmin() {
                     placeholder="Entry description..."
                   />
                 </div>
+
+                {/* RESONANTS-specific fields */}
+                {formData.type === 'RESONANTS' && (
+                  <>
+                    <div className={styles.formGroup}>
+                      <label className={styles.formLabel}>
+                        Genres (comma-separated)
+                      </label>
+                      <input
+                        type="text"
+                        name="genres"
+                        value={formData.genres?.join(', ') || ''}
+                        onChange={(e) => {
+                          const genresArray = e.target.value
+                            .split(',')
+                            .map(g => g.trim())
+                            .filter(g => g);
+                          setFormData(prev => ({ ...prev, genres: genresArray }));
+                        }}
+                        className={styles.formInput}
+                        placeholder="e.g., Synthwave, Electronic, Ambient"
+                      />
+                    </div>
+
+                    <div className={styles.formGroup}>
+                      <label className={styles.formLabel}>Energy</label>
+                      <select
+                        name="energy"
+                        value={formData.energy || ''}
+                        onChange={handleInputChange}
+                        className={styles.formSelect}
+                      >
+                        <option value="">Select energy level...</option>
+                        <option value="Calm">Calm</option>
+                        <option value="Chill">Chill</option>
+                        <option value="Energetic">Energetic</option>
+                        <option value="Intense">Intense</option>
+                        <option value="Dark">Dark</option>
+                        <option value="Uplifting">Uplifting</option>
+                      </select>
+                    </div>
+                  </>
+                )}
               </div>
 
               {/* Image URLs */}

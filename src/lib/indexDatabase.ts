@@ -14,6 +14,8 @@ interface IndexEntryRow {
   card_image_url?: string;
   display_image_url?: string;
   model_url?: string;
+  genres?: string[]; // Array of genres for RESONANTS
+  energy?: string; // Energy level for RESONANTS
   created_at?: string;
   updated_at?: string;
 }
@@ -30,6 +32,8 @@ function rowToEntry(row: IndexEntryRow): IndexEntry {
     cardImageUrl: row.card_image_url,
     displayImageUrl: row.display_image_url,
     modelUrl: row.model_url,
+    genres: row.genres,
+    energy: row.energy,
   };
 }
 
@@ -45,6 +49,8 @@ function entryToRow(entry: IndexEntry | Partial<IndexEntry>): Partial<IndexEntry
     card_image_url: entry.cardImageUrl,
     display_image_url: entry.displayImageUrl,
     model_url: entry.modelUrl,
+    genres: entry.genres,
+    energy: entry.energy,
   };
 }
 

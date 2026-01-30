@@ -31,6 +31,9 @@ export function CharacterDisplay({ character }: CharacterDisplayProps) {
           src={character.displayImageUrl}
           alt={character.name}
           className={styles.displayImage}
+          loading="eager"
+          decoding="async"
+          fetchPriority="high"
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5 }}

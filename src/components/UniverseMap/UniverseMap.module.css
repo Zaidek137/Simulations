@@ -264,9 +264,9 @@
 
 .backButton {
   position: fixed;
-  top: 2rem;
-  left: 2rem;
-  z-index: 100;
+  top: 30px;
+  left: 390px;
+  z-index: 1000;
   background: rgba(15, 23, 42, 0.4);
   backdrop-filter: blur(10px);
   border: 1px solid rgba(255, 255, 255, 0.1);

@@ -14,7 +14,7 @@ CREATE TABLE IF NOT EXISTS public.index_entries (
   -- Core Information
   name TEXT NOT NULL,
   simulation TEXT NOT NULL CHECK (simulation IN ('Resonance', 'Prime', 'Veliental Ascendance')),
-  type TEXT NOT NULL CHECK (type IN ('Characters', 'ZIBBots', 'Environments')),
+  type TEXT NOT NULL CHECK (type IN ('Scavenjers', 'RESONANTS', 'ZIBBots', 'Environments')),
   faction TEXT NOT NULL,
   description TEXT,
   
@@ -22,6 +22,10 @@ CREATE TABLE IF NOT EXISTS public.index_entries (
   card_image_url TEXT,        -- Small collectible card image
   display_image_url TEXT,     -- Large 2D character display image
   model_url TEXT,             -- 3D model URL (deprecated but kept for compatibility)
+  
+  -- RESONANTS-specific fields
+  genres TEXT[],              -- Array of music genres (for RESONANTS only)
+  energy TEXT,                -- Energy level/vibe (for RESONANTS only)
   
   -- Timestamps
   created_at TIMESTAMPTZ DEFAULT NOW(),
@@ -99,6 +103,20 @@ CREATE POLICY "Allow public delete to index entries"
   USING (true);
 
 -- =====================================================
+-- Migration for existing databases
+-- =====================================================
+-- Run this if you already have the table and need to add new columns:
+/*
+ALTER TABLE public.index_entries ADD COLUMN IF NOT EXISTS genres TEXT[];
+ALTER TABLE public.index_entries ADD COLUMN IF NOT EXISTS energy TEXT;
+ALTER TABLE public.index_entries DROP CONSTRAINT IF EXISTS index_entries_type_check;
+ALTER TABLE public.index_entries ADD CONSTRAINT index_entries_type_check 
+  CHECK (type IN ('Scavenjers', 'RESONANTS', 'ZIBBots', 'Environments'));
+-- Update existing 'Characters' entries to 'Scavenjers'
+UPDATE public.index_entries SET type = 'Scavenjers' WHERE type = 'Characters';
+*/
+
+-- =====================================================
 -- Optional: Insert mock data for testing
 -- =====================================================
 
@@ -106,14 +124,14 @@ CREATE POLICY "Allow public delete to index entries"
 /*
 -- Sample data with the 6 Resonance locations as factions
 INSERT INTO public.index_entries (id, name, simulation, type, faction, description) VALUES
-  ('idx-001', 'APEX-7', 'Resonance', 'Characters', 'The Apex', 'Elite recovery specialist operating in the most hazardous zones. APEX-7 has survived 47 consecutive Drops and holds the record for highest-value artifact extraction.'),
-  ('idx-002', 'NOVA-12', 'Resonance', 'Characters', 'Resonant', 'Technical prodigy responsible for maintaining critical infrastructure during Drop events. Known for unconventional solutions and system modifications that border on unauthorized.'),
-  ('idx-003', 'CIPHER', 'Resonance', 'Characters', 'The Veil', 'Information broker with connections spanning all districts. True identity remains unconfirmed. Provides critical intel during high-stakes operations. Loyalty: questionable.'),
-  ('idx-004', 'WARDEN-01', 'Resonance', 'Characters', 'The Apex', 'Senior Overseer responsible for monitoring District compliance. Has authorized more erasures than any other active Warden. The system''s unwavering instrument.'),
-  ('idx-005', 'ECHO', 'Resonance', 'Characters', 'Dryreach', 'Former Scavenjer whose license was revoked after a failed extraction. Now survives in the gray zones between districts, trading information and salvage.'),
-  ('idx-006', 'PULSE', 'Resonance', 'Characters', 'Verdant', 'Combat medic specializing in field treatment during Drop events. Has saved more lives than official records acknowledge. Carries unauthorized medical tech.'),
-  ('idx-007', 'GHOST-9', 'Resonance', 'Characters', 'The Underworks', 'Unregistered entity detected in multiple district systems. No official record exists. Surveillance footage corrupted. Classification: anomaly.'),
-  ('idx-008', 'IRON-GATE', 'Resonance', 'Characters', 'The Apex', 'District enforcer tasked with maintaining order between zones. Known for strict adherence to protocol. Zero tolerance for unauthorized crossings.')
+  ('idx-001', 'APEX-7', 'Resonance', 'Scavenjers', 'The Apex', 'Elite recovery specialist operating in the most hazardous zones. APEX-7 has survived 47 consecutive Drops and holds the record for highest-value artifact extraction.'),
+  ('idx-002', 'NOVA-12', 'Resonance', 'Scavenjers', 'Resonant', 'Technical prodigy responsible for maintaining critical infrastructure during Drop events. Known for unconventional solutions and system modifications that border on unauthorized.'),
+  ('idx-003', 'CIPHER', 'Resonance', 'Scavenjers', 'The Veil', 'Information broker with connections spanning all districts. True identity remains unconfirmed. Provides critical intel during high-stakes operations. Loyalty: questionable.'),
+  ('idx-004', 'WARDEN-01', 'Resonance', 'Scavenjers', 'The Apex', 'Senior Overseer responsible for monitoring District compliance. Has authorized more erasures than any other active Warden. The system''s unwavering instrument.'),
+  ('idx-005', 'ECHO', 'Resonance', 'Scavenjers', 'Dryreach', 'Former Scavenjer whose license was revoked after a failed extraction. Now survives in the gray zones between districts, trading information and salvage.'),
+  ('idx-006', 'PULSE', 'Resonance', 'Scavenjers', 'Verdant', 'Combat medic specializing in field treatment during Drop events. Has saved more lives than official records acknowledge. Carries unauthorized medical tech.'),
+  ('idx-007', 'GHOST-9', 'Resonance', 'Scavenjers', 'The Underworks', 'Unregistered entity detected in multiple district systems. No official record exists. Surveillance footage corrupted. Classification: anomaly.'),
+  ('idx-008', 'IRON-GATE', 'Resonance', 'Scavenjers', 'The Apex', 'District enforcer tasked with maintaining order between zones. Known for strict adherence to protocol. Zero tolerance for unauthorized crossings.')
 ON CONFLICT (id) DO NOTHING;
 */
 

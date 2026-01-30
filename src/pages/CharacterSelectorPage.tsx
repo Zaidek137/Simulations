@@ -10,7 +10,7 @@ import styles from '@/components/CharacterSelector/CharacterSelector.module.css'
 const VISIBLE_CARDS = 3; // Number of cards visible at once
 
 const SIMULATIONS: Simulation[] = ['Resonance', 'Prime', 'Veliental Ascendance'];
-const INDEX_TYPES: IndexType[] = ['Characters', 'ZIBBots', 'Environments'];
+const INDEX_TYPES: IndexType[] = ['Scavenjers', 'RESONANTS', 'ZIBBots', 'Environments'];
 
 type FilterStep = 'simulation' | 'type' | 'faction' | 'results';
 

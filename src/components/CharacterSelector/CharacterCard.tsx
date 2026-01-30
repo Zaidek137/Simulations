@@ -55,7 +55,7 @@ export function CharacterCard({ character, isSelected, onClick, index }: Charact
               src={character.cardImageUrl} 
               alt={character.name}
               className={styles.cardImage}
-              loading="eager"
+              loading="lazy"
               decoding="async"
               draggable={false}
             />
@@ -69,6 +69,24 @@ export function CharacterCard({ character, isSelected, onClick, index }: Charact
         {/* Simplified info overlay - name only */}
         <div className={styles.cardInfo}>
           <h3 className={styles.cardName}>{character.name}</h3>
+          
+          {/* RESONANTS-specific tags */}
+          {character.type === 'RESONANTS' && (
+            <div className={styles.resonantTags}>
+              {character.genres && character.genres.length > 0 && (
+                <div className={styles.genreTag}>
+                  <span className={styles.genreIcon}>♪</span>
+                  <span className={styles.genreText}>{character.genres.slice(0, 2).join(', ')}</span>
+                </div>
+              )}
+              {character.energy && (
+                <div className={styles.energyTag}>
+                  <span className={styles.energyIcon}>⚡</span>
+                  <span className={styles.energyText}>{character.energy}</span>
+                </div>
+              )}
+            </div>
+          )}
         </div>
       </div>
     </motion.div>
