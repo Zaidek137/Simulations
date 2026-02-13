@@ -54,6 +54,11 @@ export default function UniverseMap({ onRegionSelect, selectedRegion, universeDa
         svg.call(zoom);
 
         resetZoomState();
+
+        return () => {
+            // Cleanup pending location timer on unmount
+            if (locationTimerRef.current) clearTimeout(locationTimerRef.current);
+        };
     }, []);
 
     const resetZoomState = () => {
@@ -122,6 +127,8 @@ export default function UniverseMap({ onRegionSelect, selectedRegion, universeDa
         }
     };
 
+    const locationTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
     const handleLocationClick = (loc: Location, event: React.MouseEvent) => {
         event.stopPropagation();
 
@@ -144,8 +151,11 @@ export default function UniverseMap({ onRegionSelect, selectedRegion, universeDa
             .ease(d3.easeCubicInOut)
             .call(zoomBehavior.current.transform, transform);
 
+        // Clear any previous pending timer
+        if (locationTimerRef.current) clearTimeout(locationTimerRef.current);
+
         // Trigger the overlay after a slight delay for the zoom
-        setTimeout(() => {
+        locationTimerRef.current = setTimeout(() => {
             onLocationSelect(loc, { x: screenX, y: screenY });
         }, 200);
     };

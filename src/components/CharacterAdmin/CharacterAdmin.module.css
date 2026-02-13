@@ -379,6 +379,21 @@
   transform: scale(1.1);
 }
 
+/* Loading State */
+.loadingState {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  color: rgba(0, 245, 255, 0.6);
+  text-align: center;
+  padding: 2rem;
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 0.875rem;
+  letter-spacing: 0.05em;
+}
+
 /* Empty State */
 .emptyState {
   flex: 1;

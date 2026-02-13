@@ -271,7 +271,7 @@ export default function CodexPanel({ onEntrySelect, selectedEntry, simulationDat
                   setViewMode('simulation-categories');
                 }}
               />
-            ) : viewMode === 'simulation-categories' && selectedSimulationId ? (
+            ) : viewMode === 'simulation-categories' && selectedSimulationId && simulationData.find(s => s.id === selectedSimulationId) ? (
               // Categories by Simulation - shown after selecting a simulation
               <SimulationCategoriesView
                 simulation={simulationData.find(s => s.id === selectedSimulationId)!}

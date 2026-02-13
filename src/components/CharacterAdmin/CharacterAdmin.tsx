@@ -126,7 +126,7 @@ export default function CharacterAdmin() {
     setSaving(true);
     try {
       const entryData: IndexEntry = {
-        id: isNew ? `idx-${Date.now()}` : selectedId!,
+        id: isNew ? `idx-${Date.now()}` : (selectedId ?? ''),
         ...formData,
       };
 
@@ -153,7 +153,7 @@ export default function CharacterAdmin() {
         }
       } else {
         try {
-          const updatedEntry = await updateIndexEntry(selectedId!, entryData);
+          const updatedEntry = await updateIndexEntry(selectedId ?? '', entryData);
           if (updatedEntry) {
             setIndexEntries(prev => prev.map(e => e.id === selectedId ? updatedEntry : e));
             alert('✅ Entry updated successfully!');

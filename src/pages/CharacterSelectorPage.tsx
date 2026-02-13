@@ -75,15 +75,6 @@ export function CharacterSelectorPage() {
   // Check if current simulation is "coming soon"
   const isComingSoon = selectedSimulation === 'Prime' || selectedSimulation === 'Veliental Ascendance';
 
-  // Simulate initial loading
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      setIsLoading(false);
-    }, 1000);
-
-    return () => clearTimeout(timer);
-  }, []);
-
   // Reset selection when simulation, type, or faction changes
   useEffect(() => {
     setSelectedIndex(0);

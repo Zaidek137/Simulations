@@ -46,9 +46,7 @@ code {
     opacity: 1;
     transform: translateY(0);
   }
-}
-
-/* Skeleton loading placeholder */
+}/* Skeleton loading placeholder */
 .skeleton {
   background: linear-gradient(
     90deg,
