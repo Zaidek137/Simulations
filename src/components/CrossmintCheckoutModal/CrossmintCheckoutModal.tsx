@@ -7,7 +7,7 @@
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, AlertCircle, Zap } from 'lucide-react';
 import { useActiveAccount } from 'thirdweb/react';
-import { CrossmintProvider, CrossmintHostedCheckout } from "@crossmint/client-sdk-react-ui";
+import CrossmintHostedCheckoutButton from '../CrossmintHostedCheckoutButton';
 import styles from './CrossmintCheckoutModal.module.css';
 
 // Crossmint API key - loaded from environment variable
@@ -88,20 +88,19 @@ export default function CrossmintCheckoutModal({ isOpen, onClose }: CrossmintChe
             <div className={styles.checkoutSection}>
               {address ? (
                 <>
-                  <CrossmintProvider apiKey={clientApiKey}>
-                    <CrossmintHostedCheckout
-                      lineItems={{
-                        collectionLocator: `crossmint:${COLLECTION_ID}`,
-                        callData: {
-                          totalPrice: String(COLLECTION_PRICE),
-                          quantity: 1,
-                        },
-                      }}
-                      payment={{ crypto: { enabled: true }, fiat: { enabled: true } }}
-                      className={styles.checkoutButton}
-                      recipient={{ walletAddress: address }}
-                    />
-                  </CrossmintProvider>
+                  <CrossmintHostedCheckoutButton
+                    apiKey={clientApiKey}
+                    lineItems={{
+                      collectionLocator: `crossmint:${COLLECTION_ID}`,
+                      callData: {
+                        totalPrice: String(COLLECTION_PRICE),
+                        quantity: 1,
+                      },
+                    }}
+                    payment={{ crypto: { enabled: true }, fiat: { enabled: true } }}
+                    className={styles.checkoutButton}
+                    recipient={{ walletAddress: address }}
+                  />
                   <p className={styles.checkoutHint}>
                     You can purchase with your card or any cryptocurrency. Crossmint will handle the currency conversion for you.
                   </p>

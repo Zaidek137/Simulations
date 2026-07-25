@@ -1,228 +1,117 @@
 # Admin Portal Guide
 
-## 🔒 Security Overview
+## Security Overview
 
-The Admin Portal has been moved to a protected route and is no longer visible to public visitors. Only authorized administrators with the correct password can access it.
+The Admin Portal lives at `/admin` and is no longer part of the public map route. Access is controlled by wallet authorization, and persistent writes are handled by a signed server API.
 
-## 🚀 Quick Start
+There is no shared admin secret. Do not add legacy shared-secret admin variables or client-side service-role keys.
 
-### 1. **Access the Admin Portal**
+## Quick Start
 
-Navigate to:
-```
-http://localhost:3000/admin
-```
+### 1. Open the Admin Portal
 
-Or on production:
-```
-https://your-domain.com/admin
+Local:
+
+```text
+http://localhost:5173/admin
 ```
 
-### 2. **Login**
+Production:
 
-- **Default Password:** `scavenjer2026`
-- Session persists until you close the browser or logout
+```text
+https://your-domain.example/admin
+```
 
-### 3. **Custom Password (Recommended)**
+### 2. Connect an Authorized Wallet
 
-Add to your `.env.local` file:
+The connected wallet must be authorized by the server-side `SIMULATIONS_ADMIN_WALLETS` variable or by the database `is_admin` RPC. Mirror admin wallets in `VITE_SIMULATIONS_ADMIN_WALLETS` only when the browser should show admin UI immediately.
+
+### 3. Save Through Signed Operations
+
+When you save, the app signs an operation payload with the active wallet. `api/admin/operations.ts` verifies the signature and performs the Supabase write from the server.
+
+## Required Environment Variables
+
+Client-side Vite variables:
 
 ```env
-VITE_ADMIN_PASSWORD=YourSecurePassword123
+VITE_SUPABASE_URL=https://your-project-id.supabase.co
+VITE_SUPABASE_ANON_KEY=your-supabase-anon-key
+VITE_THIRDWEB_CLIENT_ID=your-thirdweb-client-id
+VITE_SIMULATIONS_ADMIN_WALLETS=0xAdminWalletOne,0xAdminWalletTwo
 ```
 
-**Important:** Never commit this file to Git! It's already in `.gitignore`.
+Server/runtime variables:
 
-## 📋 Features
+```env
+SUPABASE_SERVICE_ROLE_KEY=your-server-only-service-role-key
+SIMULATIONS_ADMIN_WALLETS=0xAdminWalletOne,0xAdminWalletTwo
+SIMULATIONS_ALLOWED_ORIGIN=https://your-simulations-domain.example
+SIMULATIONS_ALLOWED_ORIGINS=https://preview-one.example,https://preview-two.example
+```
+
+## Features
 
 ### Public View (`/`)
+
 - Interactive Universe Map
-- Codex Panel (read-only)
+- Codex/lore browsing
 - Location overlays
-- No admin tools visible
+- No admin write controls
 
 ### Admin View (`/admin`)
-- **Full Admin Portal** - All editing capabilities
-- **Region Management** - Create, edit, delete regions
-- **Location Management** - Add locations to regions
-- **Coordinate Picker** - Visual coordinate selection
-- **Supabase Sync** - Save changes to database
-- **Quick Navigation** - Switch between admin and public views
-- **Secure Logout** - Clears session and returns to public view
 
-## 🎨 Admin Interface
+- Universe management
+- Location management
+- Coordinate picker
+- Supabase persistence through signed operations
+- Public map preview
 
-The admin interface includes:
+## Admin Operation Flow
 
-### Header Bar
-- **Admin Dashboard** indicator
-- **Authorized** status badge
-- **View Public Map** button - Opens public view in same window
-- **Logout** button - Ends admin session
+1. Open `/admin`.
+2. Connect an authorized wallet.
+3. Make changes in the admin panel.
+4. Save changes.
+5. The app signs the operation payload.
+6. The server validates the wallet signature, nonce, origin, and operation type.
+7. The server writes to Supabase using `SUPABASE_SERVICE_ROLE_KEY`.
 
-### Admin Portal Panel
-- Same powerful editing tools as before
-- Full CRUD operations for regions and locations
-- Live preview of changes
-- Coordinate picker for precise positioning
+## Production Checklist
 
-## 🔐 Authentication Flow
+- `SUPABASE_SERVICE_ROLE_KEY` is configured only in server/runtime settings.
+- No service-role key is committed or exposed with a `VITE_` prefix.
+- `SIMULATIONS_ADMIN_WALLETS` includes only active administrator wallets.
+- Production domains are allowlisted with `SIMULATIONS_ALLOWED_ORIGIN` or `SIMULATIONS_ALLOWED_ORIGINS`.
+- `/api/save-data` remains disabled unless a new authenticated replacement is built.
 
-1. **Access Admin URL** (`/admin`)
-2. **Enter Password** (stored in `VITE_ADMIN_PASSWORD` or default)
-3. **Session Created** - Stored in `sessionStorage`
-4. **Admin Access Granted** - Full editing capabilities
-5. **Logout** - Session cleared, redirected to public view
+## Troubleshooting
 
-## 🛡️ Security Features
+### Admin actions are rejected
 
-### Current Implementation
-- ✅ Password-protected access
-- ✅ Session-based authentication
-- ✅ Hidden from public routes
-- ✅ Environment variable password
-- ✅ Logout functionality
+- Confirm the connected wallet is authorized.
+- Confirm the wallet signature prompt was approved.
+- Confirm server env includes `SUPABASE_SERVICE_ROLE_KEY`.
+- Confirm the current browser origin is allowlisted.
 
-### Future Enhancements (Optional)
-You can enhance security by:
-- Integrating Supabase Auth for proper user accounts
-- Adding role-based access control (RBAC)
-- Implementing 2FA (Two-Factor Authentication)
-- Setting up audit logs for admin actions
+### Data loads but will not save
 
-## 🚨 Important Notes
+- Public reads can work with only `VITE_SUPABASE_URL` and `VITE_SUPABASE_ANON_KEY`.
+- Writes also require the signed admin API and server-side service-role key.
+- Check the Vercel function logs or local serverless logs for the rejected operation reason.
 
-### For Production
+### An admin wallet should be removed
 
-1. **Change Default Password**
-   ```env
-   VITE_ADMIN_PASSWORD=YourVerySecurePasswordHere
-   ```
+- Remove it from `SIMULATIONS_ADMIN_WALLETS`.
+- Redeploy or restart the serverless environment so the new setting is active.
 
-2. **Use Strong Password**
-   - At least 16 characters
-   - Mix of letters, numbers, symbols
-   - Avoid common words
+## Related Files
 
-3. **Consider Supabase Auth** (For Multiple Admins)
-   ```typescript
-   // Already implemented helper functions in src/lib/supabase.ts:
-   import { signIn, signOut, getCurrentUser } from '@/lib/supabase';
-   ```
-
-4. **Keep Admin URL Private**
-   - Don't link to `/admin` from public pages
-   - Share URL only with authorized personnel
-
-## 🔄 Upgrading to Supabase Auth
-
-If you want to upgrade from simple password to full Supabase authentication:
-
-### Step 1: Enable Auth in Supabase
-```sql
--- Run in Supabase SQL Editor
--- Create admin users table (optional, for role management)
-CREATE TABLE admin_users (
-  id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
-  user_id uuid REFERENCES auth.users(id) ON DELETE CASCADE,
-  role text DEFAULT 'admin',
-  created_at timestamptz DEFAULT now()
-);
-```
-
-### Step 2: Update AdminPage.tsx
-Replace password check with:
-
-```typescript
-import { signIn, getCurrentUser } from '@/lib/supabase';
-
-// In component:
-const handleLogin = async (e: React.FormEvent) => {
-  e.preventDefault();
-  try {
-    await signIn(email, password);
-    setIsAuthorized(true);
-  } catch (error) {
-    setError('Invalid credentials');
-  }
-};
-
-// On mount:
-useEffect(() => {
-  const checkAuth = async () => {
-    const user = await getCurrentUser();
-    setIsAuthorized(!!user);
-  };
-  checkAuth();
-}, []);
-```
-
-## 📱 Usage Examples
-
-### Example 1: Quick Edit
-1. Navigate to `/admin`
-2. Login with password
-3. Edit region/location
-4. Click "Save Changes"
-5. Changes sync to Supabase
-6. Click "View Public Map" to see live results
-
-### Example 2: Add New Region
-1. Access admin portal
-2. Click "Add Region" in admin panel
-3. Use coordinate picker to select position
-4. Fill in region details
-5. Add locations to region
-6. Save to Supabase
-7. Logout when done
-
-## 🐛 Troubleshooting
-
-### Can't Access Admin Portal
-- ✅ Verify you're at `/admin` route
-- ✅ Check password is correct
-- ✅ Try clearing browser cache/cookies
-- ✅ Check browser console for errors
-
-### Changes Not Saving
-- ✅ Check Supabase connection
-- ✅ Verify environment variables are set
-- ✅ Check browser console for API errors
-- ✅ Ensure you clicked "Save Changes"
-
-### Kicked Out of Admin
-- ✅ Session expires on browser close
-- ✅ Check if you logged out accidentally
-- ✅ Verify password hasn't changed
-
-## 📚 Related Files
-
-- `src/pages/AdminPage.tsx` - Admin interface
-- `src/pages/PublicMap.tsx` - Public view
-- `src/App.tsx` - Router configuration
-- `src/lib/supabase.ts` - Database functions
-- `src/components/AdminPortal/AdminPortal.tsx` - Admin panel component
-
-## ✨ What Changed?
-
-### Before
-- Admin portal visible on public page
-- Anyone could access editing tools
-- No password protection
-
-### After
-- Admin portal hidden from public
-- Protected route at `/admin`
-- Password-required access
-- Clean separation of public/admin views
-- Session-based authentication
-- Professional login screen
-
----
-
-**Need Help?** Check the main `README.md` or create an issue in the repository.
-
-
-
-
-
+- `src/pages/AdminPage.tsx`
+- `src/pages/PublicMap.tsx`
+- `src/admin/constants.ts`
+- `src/services/adminApi.ts`
+- `src/lib/supabase.ts`
+- `src/lib/indexDatabase.ts`
+- `api/admin/operations.ts`
+- `api/_utils/cors.ts`

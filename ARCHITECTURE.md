@@ -1,509 +1,109 @@
-# 🏗️ Architecture Overview
+# Simulations Architecture Overview
 
-## System Architecture
+This document describes the current Simulations architecture after the Vite migration and signed wallet-admin hardening.
 
-```
-┌─────────────────────────────────────────────────────────────────┐
-│                         USER'S BROWSER                          │
-├─────────────────────────────────────────────────────────────────┤
-│                                                                 │
-│  Main Site                          Lore Map                    │
-│  (scavenjer.com)                    (lore.scavenjer.com)       │
-│  ┌──────────────┐                   ┌──────────────┐           │
-│  │              │                   │              │           │
-│  │  React 18    │                   │  React 19    │           │
-│  │  Vite        │                   │  Next.js 16  │           │
-│  │              │                   │  D3.js       │           │
-│  └──────┬───────┘                   └──────┬───────┘           │
-│         │                                  │                   │
-│         │ Navigation Link                  │                   │
-│         └──────────────────────────────────┘                   │
-│                                                                 │
-└─────────────────────────────────────────────────────────────────┘
-                         │                    │
-                         │                    │
-                         ▼                    ▼
-┌─────────────────────────────────────────────────────────────────┐
-│                    VERCEL EDGE NETWORK                          │
-├─────────────────────────────────────────────────────────────────┤
-│                                                                 │
-│  Project 1: Main Site          Project 2: Lore Map             │
-│  ┌──────────────┐              ┌──────────────┐                │
-│  │ Static Files │              │ Next.js API  │                │
-│  │ API Routes   │              │ Static Pages │                │
-│  └──────┬───────┘              └──────┬───────┘                │
-│         │                             │                        │
-└─────────┼─────────────────────────────┼────────────────────────┘
-          │                             │
-          │                             │
-          ▼                             ▼
-┌─────────────────────────────────────────────────────────────────┐
-│                    SUPABASE (SHARED PROJECT)                    │
-├─────────────────────────────────────────────────────────────────┤
-│                                                                 │
-│  Main Site Tables              Lore System Tables               │
-│  ┌──────────────────┐          ┌──────────────────┐            │
-│  │ admin_users      │◄─────────┤ lore_regions     │            │
-│  │ assets           │  Uses    │ lore_locations   │            │
-│  │ drops            │  for     │ lore_config      │            │
-│  │ user_profiles    │  Auth    │                  │            │
-│  │ city_voting      │          │ (Isolated)       │            │
-│  │ ... (30+ more)   │          └──────────────────┘            │
-│  └──────────────────┘                                           │
-│                                                                 │
-│  Authentication (auth.users)                                    │
-│  ┌─────────────────────────────────────────────────┐            │
-│  │ Shared by both sites                            │            │
-│  └─────────────────────────────────────────────────┘            │
-│                                                                 │
-└─────────────────────────────────────────────────────────────────┘
+## Runtime Shape
+
+```text
+Browser
+  -> Vite React app
+  -> Public Supabase reads with anon key
+  -> Signed admin operation requests for writes
+
+Vercel serverless functions
+  -> api/admin/operations.ts
+  -> Supabase service-role client
+
+Supabase
+  -> Public read tables/policies for active map content
+  -> Server-side writes from signed admin operations
 ```
 
----
+## Public Flow
 
-## Data Flow
-
-### Public User Views Lore Map
-
-```
-1. User visits lore.scavenjer.com
-   │
-   ▼
-2. Next.js loads page
-   │
-   ▼
-3. Fetch regions & config from Supabase
-   │
-   ├─► SELECT * FROM lore_regions WHERE is_active = true
-   │   (RLS allows public read)
-   │
-   └─► SELECT * FROM lore_config WHERE config_key = 'multiverse_background'
-       (RLS allows public read)
-   │
-   ▼
-4. Render interactive map with D3.js
-   │
-   ▼
-5. User zooms/pans (all client-side, no DB queries)
+```text
+User opens /
+App reads active universe/map data
+Supabase anon key performs allowed public reads
+Map renders in the browser
+No admin write controls are available on the public route
 ```
 
-### Admin Updates Lore Content
+The public app uses only browser-readable Vite variables:
 
-```
-1. Admin signs in via admin portal
-   │
-   ▼
-2. Supabase Auth validates credentials
-   │
-   ├─► Check auth.users table
-   └─► Generate JWT token
-   │
-   ▼
-3. Admin edits region/location
-   │
-   ▼
-4. Admin clicks "Save Changes"
-   │
-   ▼
-5. POST to /api/save-data
-   │
-   ▼
-6. API calls Supabase RPC function
-   │
-   ├─► upsert_lore_region(...)
-   │   │
-   │   ├─► Verify JWT token
-   │   ├─► Check admin_users table
-   │   └─► Insert/Update lore_regions
-   │
-   └─► upsert_lore_location(...)
-       │
-       ├─► Verify JWT token
-       ├─► Check admin_users table
-       └─► Insert/Update lore_locations
-   │
-   ▼
-7. Success response
-   │
-   ▼
-8. UI updates, localStorage syncs
+```env
+VITE_SUPABASE_URL=https://your-project-id.supabase.co
+VITE_SUPABASE_ANON_KEY=your-supabase-anon-key
+VITE_THIRDWEB_CLIENT_ID=your-thirdweb-client-id
 ```
 
----
+## Admin Flow
+
+```text
+Admin opens /admin
+Admin connects an authorized wallet
+Admin action creates a signed operation payload
+api/admin/operations.ts validates:
+  - method and origin
+  - nonce freshness/replay protection
+  - payload shape
+  - wallet signature
+  - wallet allowlist
+Server writes to Supabase with a service-role key
+```
+
+Server-only variables:
+
+```env
+SUPABASE_SERVICE_ROLE_KEY=your-server-only-service-role-key
+SIMULATIONS_ADMIN_WALLETS=0xAdminWalletOne,0xAdminWalletTwo
+SIMULATIONS_ALLOWED_ORIGIN=https://your-production-domain.example
+SIMULATIONS_ALLOWED_ORIGINS=https://preview-one.example,https://preview-two.example
+```
+
+## Important Boundaries
+
+- The browser never receives `SUPABASE_SERVICE_ROLE_KEY`.
+- Admin writes do not rely on a shared password or browser session.
+- The legacy bulk save endpoint is disabled.
+- Production browser writes require an allowed origin.
+- Additional admins are configured by wallet address, not by client-side secrets.
+
+## Key Files
+
+```text
+src/pages/PublicMap.tsx
+src/pages/AdminPage.tsx
+src/admin/constants.ts
+src/services/adminApi.ts
+src/lib/supabase.ts
+src/lib/indexDatabase.ts
+api/admin/operations.ts
+api/_utils/cors.ts
+api/save-data.ts
+```
 
 ## Security Layers
 
-```
-┌─────────────────────────────────────────────────────────────────┐
-│                         PUBLIC ACCESS                           │
-├─────────────────────────────────────────────────────────────────┤
-│                                                                 │
-│  ✅ View active regions                                         │
-│  ✅ View active locations                                       │
-│  ✅ View configuration                                          │
-│  ✅ Interact with map                                           │
-│                                                                 │
-│  RLS Policy: WHERE is_active = true                             │
-│                                                                 │
-└─────────────────────────────────────────────────────────────────┘
+Public users:
 
-┌─────────────────────────────────────────────────────────────────┐
-│                      AUTHENTICATED USER                         │
-├─────────────────────────────────────────────────────────────────┤
-│                                                                 │
-│  ✅ All public access                                           │
-│  ✅ View own profile                                            │
-│                                                                 │
-│  RLS Policy: auth.uid() = user_id                               │
-│                                                                 │
-└─────────────────────────────────────────────────────────────────┘
+- Can read active map content.
+- Cannot access service-role credentials.
+- Cannot perform admin writes through the client.
 
-┌─────────────────────────────────────────────────────────────────┐
-│                          ADMIN USER                             │
-├─────────────────────────────────────────────────────────────────┤
-│                                                                 │
-│  ✅ All authenticated access                                    │
-│  ✅ Create/update regions                                       │
-│  ✅ Create/update locations                                     │
-│  ✅ Update configuration                                        │
-│  ✅ Soft delete content                                         │
-│                                                                 │
-│  RPC Function Check:                                            │
-│  1. Verify JWT token                                            │
-│  2. Check EXISTS in admin_users                                 │
-│  3. Verify is_active = true                                     │
-│  4. Execute operation                                           │
-│                                                                 │
-└─────────────────────────────────────────────────────────────────┘
-```
+Authorized admins:
 
----
+- Must connect an allowlisted wallet.
+- Must sign each admin operation.
+- Can write only through the validated server operation endpoint.
 
-## Database Schema Relationships
+Server functions:
 
-```
-┌─────────────────────────────────────────────────────────────────┐
-│                         auth.users                              │
-│  (Supabase Auth - Built-in)                                     │
-├─────────────────────────────────────────────────────────────────┤
-│  id (UUID)                                                      │
-│  email                                                          │
-│  encrypted_password                                             │
-│  ...                                                            │
-└────────────┬────────────────────────────────────────────────────┘
-             │
-             │ Foreign Key
-             │
-             ▼
-┌─────────────────────────────────────────────────────────────────┐
-│                       admin_users                               │
-│  (Your existing table)                                          │
-├─────────────────────────────────────────────────────────────────┤
-│  id (UUID) ──► FK to auth.users                                 │
-│  email                                                          │
-│  is_active                                                      │
-│  ...                                                            │
-└────────────┬────────────────────────────────────────────────────┘
-             │
-             │ Used by RPC functions
-             │ to verify admin access
-             │
-             ▼
-┌─────────────────────────────────────────────────────────────────┐
-│                      lore_regions                               │
-├─────────────────────────────────────────────────────────────────┤
-│  id (UUID, PK)                                                  │
-│  region_id (TEXT, UNIQUE)                                       │
-│  name, description, color                                       │
-│  cx, cy (coordinates)                                           │
-│  thumb_url, background_url, image_url                           │
-│  created_by ──► FK to auth.users                                │
-│  updated_by ──► FK to auth.users                                │
-└────────────┬────────────────────────────────────────────────────┘
-             │
-             │ One-to-Many
-             │
-             ▼
-┌─────────────────────────────────────────────────────────────────┐
-│                     lore_locations                              │
-├─────────────────────────────────────────────────────────────────┤
-│  id (UUID, PK)                                                  │
-│  location_id (TEXT, UNIQUE)                                     │
-│  region_id ──► FK to lore_regions                               │
-│  name, description                                              │
-│  cx, cy (coordinates within region)                             │
-│  location_type (planet/station/anomaly)                         │
-│  thumb_url                                                      │
-│  created_by ──► FK to auth.users                                │
-│  updated_by ──► FK to auth.users                                │
-└─────────────────────────────────────────────────────────────────┘
+- Enforce CORS/origin policy.
+- Reject replayed nonces.
+- Validate payload types before mutation.
+- Use server-only Supabase credentials for writes.
 
-┌─────────────────────────────────────────────────────────────────┐
-│                       lore_config                               │
-├─────────────────────────────────────────────────────────────────┤
-│  id (UUID, PK)                                                  │
-│  config_key (TEXT, UNIQUE)                                      │
-│  config_value (JSONB)                                           │
-│  updated_by ──► FK to auth.users                                │
-└─────────────────────────────────────────────────────────────────┘
-```
+## Deployment Model
 
----
-
-## File Structure
-
-```
-Scav repo/
-│
-├── scavenjersite/                    # Main Scavenjer site
-│   ├── src/
-│   ├── supabase/
-│   │   └── migrations/
-│   │       └── 20250601000000_create_lore_system.sql  ← NEW
-│   └── ...
-│
-├── Interactive Website/              # Lore map (NEW)
-│   ├── src/
-│   │   ├── app/
-│   │   │   ├── page.tsx             ← Updated (loads from Supabase)
-│   │   │   ├── layout.tsx
-│   │   │   └── api/
-│   │   │       └── save-data/
-│   │   │           └── route.ts     ← Updated (saves to Supabase)
-│   │   ├── components/
-│   │   │   ├── UniverseMap/
-│   │   │   ├── AdminPortal/         ← Updated (better feedback)
-│   │   │   ├── DetailOverlay/
-│   │   │   └── LocalPointOverlay/
-│   │   ├── data/
-│   │   │   └── universe-data.ts     (Fallback data)
-│   │   └── lib/
-│   │       └── supabase.ts          ← NEW (Supabase client)
-│   │
-│   ├── public/
-│   │   ├── images/
-│   │   └── videos/
-│   │
-│   ├── vercel.json                   ← NEW
-│   ├── package.json
-│   ├── QUICKSTART.md                 ← NEW
-│   ├── SETUP.md                      ← NEW
-│   ├── DEPLOYMENT.md                 ← NEW
-│   ├── INTEGRATION_SUMMARY.md        ← NEW
-│   └── ARCHITECTURE.md               ← This file
-│
-└── SUPABASE_INTEGRATION_ANSWER.md    ← NEW (answers your question)
-```
-
----
-
-## Technology Stack
-
-### Main Site (Existing)
-```
-Frontend:
-├── React 18
-├── Vite
-├── React Router
-├── Framer Motion 11
-└── Tailwind CSS
-
-Backend:
-├── Supabase (Database)
-├── Vercel (Hosting)
-└── Various APIs
-```
-
-### Lore Map (New)
-```
-Frontend:
-├── React 19
-├── Next.js 16 (App Router)
-├── D3.js (Visualizations)
-├── Framer Motion 12
-└── CSS Modules
-
-Backend:
-├── Supabase (Same project!)
-├── Next.js API Routes
-└── Vercel (Separate project)
-```
-
----
-
-## Deployment Architecture
-
-```
-┌─────────────────────────────────────────────────────────────────┐
-│                         VERCEL ACCOUNT                          │
-├─────────────────────────────────────────────────────────────────┤
-│                                                                 │
-│  Project 1: scavenjer-main                                      │
-│  ┌─────────────────────────────────────────────────────────┐   │
-│  │ Domain: scavenjer.com                                    │   │
-│  │ Root: scavenjersite/                                     │   │
-│  │ Framework: Vite                                          │   │
-│  │ Build: npm run vercel-build                              │   │
-│  │ Output: dist/                                            │   │
-│  └─────────────────────────────────────────────────────────┘   │
-│                                                                 │
-│  Project 2: scavenjer-lore                                      │
-│  ┌─────────────────────────────────────────────────────────┐   │
-│  │ Domain: lore.scavenjer.com                               │   │
-│  │ Root: Interactive Website/                               │   │
-│  │ Framework: Next.js (auto-detected)                       │   │
-│  │ Build: npm run build (automatic)                         │   │
-│  │ Output: .next/ (automatic)                               │   │
-│  └─────────────────────────────────────────────────────────┘   │
-│                                                                 │
-│  Both projects share:                                           │
-│  ├── Same Git repository                                        │
-│  ├── Same Supabase project (different tables)                  │
-│  └── Same admin users                                           │
-│                                                                 │
-└─────────────────────────────────────────────────────────────────┘
-```
-
----
-
-## Performance Optimization
-
-### Caching Strategy
-
-```
-┌─────────────────────────────────────────────────────────────────┐
-│                      BROWSER (Client)                           │
-├─────────────────────────────────────────────────────────────────┤
-│  localStorage                                                   │
-│  ├── universeData (backup)                                      │
-│  └── universeConfig (backup)                                    │
-│                                                                 │
-│  Browser Cache                                                  │
-│  ├── Static assets (images, videos)                             │
-│  └── JavaScript bundles                                         │
-└─────────────────────────────────────────────────────────────────┘
-                         │
-                         ▼
-┌─────────────────────────────────────────────────────────────────┐
-│                    VERCEL EDGE NETWORK                          │
-├─────────────────────────────────────────────────────────────────┤
-│  Edge Cache                                                     │
-│  ├── Static pages (24 hours)                                    │
-│  ├── Images (1 year)                                            │
-│  └── Videos (1 year)                                            │
-└─────────────────────────────────────────────────────────────────┘
-                         │
-                         ▼
-┌─────────────────────────────────────────────────────────────────┐
-│                    SUPABASE (Database)                          │
-├─────────────────────────────────────────────────────────────────┤
-│  PostgREST Cache                                                │
-│  ├── Query results (configurable)                               │
-│  └── Connection pooling                                         │
-│                                                                 │
-│  Database Indexes                                               │
-│  ├── lore_regions.region_id (fast lookups)                      │
-│  ├── lore_locations.location_id (fast lookups)                  │
-│  └── lore_locations.region_id (fast joins)                      │
-└─────────────────────────────────────────────────────────────────┘
-```
-
----
-
-## Scalability
-
-### Current Capacity
-- **Users:** 10,000+ concurrent
-- **Regions:** 100+ (realistically 10-20)
-- **Locations:** 1,000+ (realistically 50-200)
-- **API Requests:** 100,000+ per day
-
-### Bottlenecks (if any)
-1. **Supabase free tier:** 500 MB database, 2 GB bandwidth/month
-2. **Vercel free tier:** 100 GB bandwidth/month
-3. **D3.js rendering:** 1000+ elements may slow down
-
-### Scaling Solutions
-1. **Upgrade Supabase:** $25/month → 8 GB database, 50 GB bandwidth
-2. **Upgrade Vercel:** $20/month → 1 TB bandwidth
-3. **Optimize rendering:** Implement virtualization for large datasets
-
----
-
-## Monitoring & Observability
-
-### Vercel Dashboard
-- Deployment status
-- Build logs
-- Error rates
-- Performance metrics
-- Analytics (page views, load times)
-
-### Supabase Dashboard
-- Database size
-- API request count
-- Active connections
-- Query performance
-- Logs (API, Database, Auth)
-
-### Browser Console
-- Client-side errors
-- Network requests
-- Performance timing
-- Data loading status
-
----
-
-## Backup & Recovery
-
-### Automatic Backups
-- **Supabase:** Daily automatic backups (7 days retention)
-- **Git:** Full version control of code
-- **Vercel:** Deployment history (rollback anytime)
-
-### Manual Backups
-```bash
-# Export lore data
-supabase db dump --data-only --schema public \
-  --table lore_regions \
-  --table lore_locations \
-  --table lore_config \
-  > lore_backup.sql
-
-# Restore if needed
-psql -h your-project.supabase.co -U postgres < lore_backup.sql
-```
-
-### Disaster Recovery
-1. **Code lost:** Restore from Git
-2. **Database lost:** Restore from Supabase backup
-3. **Deployment lost:** Redeploy from Git
-4. **Everything lost:** Restore from Git + Supabase backup
-
----
-
-## Future Architecture Considerations
-
-### Potential Enhancements
-1. **CDN for images:** CloudFlare, ImageKit, or Cloudinary
-2. **Real-time updates:** Supabase Realtime subscriptions
-3. **Search functionality:** Supabase Full-Text Search
-4. **Analytics:** PostHog or Mixpanel integration
-5. **Error tracking:** Sentry integration
-6. **A/B testing:** Vercel Edge Config
-
-### Integration Opportunities
-1. **Link NFTs to locations:** Join lore_locations with assets table
-2. **User progress tracking:** Track which locations users have "discovered"
-3. **Achievements system:** Unlock lore based on collectibles
-4. **Community contributions:** Allow users to submit lore (moderated)
-
----
-
-This architecture is designed to be:
-- ✅ **Scalable** - Handles growth easily
-- ✅ **Maintainable** - Clear separation of concerns
-- ✅ **Secure** - Multiple security layers
-- ✅ **Cost-effective** - Shared resources
-- ✅ **Future-proof** - Easy to extend
-
+Simulations is a Vite app deployed from the `Simulations` root. Production output is `dist`, and serverless functions live under `api/`.

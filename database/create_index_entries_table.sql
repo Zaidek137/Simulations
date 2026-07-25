@@ -57,8 +57,8 @@ CREATE TRIGGER update_index_entries_updated_at
 -- =====================================================
 -- Row Level Security (RLS) Policies
 -- =====================================================
--- Note: Admin access is controlled at the application level via wallet authentication
--- These policies allow public access since the admin pages are already protected
+-- Public users can read index entries.
+-- Writes must go through a signed server-side admin operation that uses the service role.
 -- =====================================================
 
 -- Enable RLS on the table
@@ -72,6 +72,7 @@ DROP POLICY IF EXISTS "Allow authenticated users to delete index entries" ON pub
 DROP POLICY IF EXISTS "Allow public insert to index entries" ON public.index_entries;
 DROP POLICY IF EXISTS "Allow public update to index entries" ON public.index_entries;
 DROP POLICY IF EXISTS "Allow public delete to index entries" ON public.index_entries;
+DROP POLICY IF EXISTS "Allow service role to manage index entries" ON public.index_entries;
 
 -- Policy: Allow public read access (anyone can view entries)
 CREATE POLICY "Allow public read access to index entries"
@@ -80,27 +81,13 @@ CREATE POLICY "Allow public read access to index entries"
   TO public
   USING (true);
 
--- Policy: Allow public insert (protected by wallet auth at app level)
-CREATE POLICY "Allow public insert to index entries"
+-- Policy: Allow server-side admin operations to manage entries
+CREATE POLICY "Allow service role to manage index entries"
   ON public.index_entries
-  FOR INSERT
-  TO public
-  WITH CHECK (true);
-
--- Policy: Allow public update (protected by wallet auth at app level)
-CREATE POLICY "Allow public update to index entries"
-  ON public.index_entries
-  FOR UPDATE
-  TO public
+  FOR ALL
+  TO service_role
   USING (true)
   WITH CHECK (true);
-
--- Policy: Allow public delete (protected by wallet auth at app level)
-CREATE POLICY "Allow public delete to index entries"
-  ON public.index_entries
-  FOR DELETE
-  TO public
-  USING (true);
 
 -- =====================================================
 -- Migration for existing databases

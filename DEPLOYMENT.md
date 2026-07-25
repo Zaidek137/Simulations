@@ -75,8 +75,9 @@ npm install
 Create `.env.local` in the `Interactive Website` folder:
 
 ```env
-NEXT_PUBLIC_SUPABASE_URL=https://your-project-id.supabase.co
-NEXT_PUBLIC_SUPABASE_ANON_KEY=your-anon-key-here
+VITE_SUPABASE_URL=https://your-project-id.supabase.co
+VITE_SUPABASE_ANON_KEY=your-anon-key-here
+VITE_THIRDWEB_CLIENT_ID=your-thirdweb-client-id
 ```
 
 **Where to find these values:**
@@ -84,8 +85,8 @@ NEXT_PUBLIC_SUPABASE_ANON_KEY=your-anon-key-here
 2. Select your project
 3. Go to **Settings** → **API**
 4. Copy:
-   - **Project URL** → `NEXT_PUBLIC_SUPABASE_URL`
-   - **Project API keys** → **anon/public** → `NEXT_PUBLIC_SUPABASE_ANON_KEY`
+   - **Project URL** → `VITE_SUPABASE_URL`
+   - **Project API keys** → **anon/public** → `VITE_SUPABASE_ANON_KEY`
 
 ### Step 3: Test Locally
 
@@ -130,8 +131,15 @@ In Vercel project settings, add these environment variables:
 
 | Name | Value | Environment |
 |------|-------|-------------|
-| `NEXT_PUBLIC_SUPABASE_URL` | `https://your-project-id.supabase.co` | Production, Preview, Development |
-| `NEXT_PUBLIC_SUPABASE_ANON_KEY` | `your-anon-key-here` | Production, Preview, Development |
+| `VITE_SUPABASE_URL` | `https://your-project-id.supabase.co` | Production, Preview, Development |
+| `VITE_SUPABASE_ANON_KEY` | `your-anon-key-here` | Production, Preview, Development |
+| `VITE_THIRDWEB_CLIENT_ID` | `your-thirdweb-client-id` | Production, Preview, Development |
+| `SUPABASE_SERVICE_ROLE_KEY` | `<your-supabase-service-role-key>` | Production, Preview |
+| `SIMULATIONS_ADMIN_WALLETS` | `0xAdminWalletOne,0xAdminWalletTwo` | Production, Preview |
+| `SIMULATIONS_ALLOWED_ORIGIN` | `https://your-simulations-domain.example` | Production, Preview |
+| `SIMULATIONS_ALLOWED_ORIGINS` | `https://preview-one.example,https://preview-two.example` | Preview, optional |
+
+`SUPABASE_SERVICE_ROLE_KEY`, `SIMULATIONS_ADMIN_WALLETS`, `SIMULATIONS_ALLOWED_ORIGIN`, and `SIMULATIONS_ALLOWED_ORIGINS` are server-side settings for the signed admin write API. Never expose service-role keys with a `VITE_` prefix. Production browser requests to the signed admin API are rejected unless their origin is explicitly allowlisted by one of those origin variables, `SIMULATIONS_APP_URL`, `APP_URL`, `VITE_APP_URL`, or the active Vercel deployment URL.
 
 **How to add:**
 1. In Vercel project → **Settings** → **Environment Variables**
@@ -311,7 +319,7 @@ await bulkUpsertData(regions);
 ### Build Fails on Vercel
 
 **Error:** "Missing environment variables"
-- **Fix:** Add `NEXT_PUBLIC_SUPABASE_URL` and `NEXT_PUBLIC_SUPABASE_ANON_KEY` in Vercel project settings
+- **Fix:** Add `VITE_SUPABASE_URL`, `VITE_SUPABASE_ANON_KEY`, and `VITE_THIRDWEB_CLIENT_ID` in Vercel project settings
 
 **Error:** "Module not found: @supabase/supabase-js"
 - **Fix:** Ensure `package.json` includes `@supabase/supabase-js` dependency
@@ -324,7 +332,7 @@ await bulkUpsertData(regions);
 - **Verify:** Environment variables are set correctly
 - **Test:** Run this in browser console:
   ```javascript
-  console.log(process.env.NEXT_PUBLIC_SUPABASE_URL);
+  console.log(import.meta.env.VITE_SUPABASE_URL);
   ```
   Should output your Supabase URL
 
@@ -421,18 +429,20 @@ For issues or questions:
 ## Security Notes
 
 ✅ **Safe to expose:**
-- `NEXT_PUBLIC_SUPABASE_URL`
-- `NEXT_PUBLIC_SUPABASE_ANON_KEY`
+- `VITE_SUPABASE_URL`
+- `VITE_SUPABASE_ANON_KEY`
+- `VITE_THIRDWEB_CLIENT_ID`
 
-❌ **NEVER expose:**
-- `SUPABASE_SERVICE_ROLE_KEY` (not used in this project)
+❌ **NEVER expose in client-prefixed env vars:**
+- `SUPABASE_SERVICE_ROLE_KEY`
 - Database passwords
 - Admin credentials
 
 All write operations are protected by:
 - Row Level Security (RLS)
-- Admin-only RPC functions
-- JWT token verification
+- Wallet-signature verification
+- Server-side admin operation API
+- Supabase service-role mutations
 
 ---
 

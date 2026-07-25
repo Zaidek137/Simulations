@@ -174,7 +174,7 @@ Simulations/
 
 ### For Admins
 1. Navigate to `/admin`
-2. Log in with password (set in `VITE_ADMIN_PASSWORD`)
+2. Log in with password (set in `wallet-based admin authorization`)
 3. Click "📖 Codex" tab
 4. Manage entries (add/edit/delete)
 5. Changes save directly to Supabase

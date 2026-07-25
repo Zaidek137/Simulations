@@ -6,18 +6,28 @@
 
 import { supabase } from '../lib/supabase';
 
-// Master admin wallet - same as scavenjersite for consistency
-export const MASTER_ADMIN_WALLET = '0xf8Ca9dA64Bb500C4C4395f7Bb987De3e77883130';
+const normalizeWallet = (address: string | undefined): string => (address || '').trim().toLowerCase();
+
+const configuredAdminWallets = [
+  import.meta.env.VITE_SIMULATIONS_ADMIN_WALLET,
+  ...(import.meta.env.VITE_SIMULATIONS_ADMIN_WALLETS || '').split(','),
+]
+  .map(normalizeWallet)
+  .filter(Boolean);
+
+export const ADMIN_WALLETS = Array.from(new Set(configuredAdminWallets));
+export const MASTER_ADMIN_WALLET = ADMIN_WALLETS[0] || '';
 
 /**
  * Check if a wallet address is an admin
  * First checks master admin, then database for additional admins
  */
 export async function isAdminWallet(address: string | undefined): Promise<boolean> {
-  if (!address) return false;
+  const normalizedAddress = normalizeWallet(address);
+  if (!normalizedAddress) return false;
   
-  // First check if it's the master admin (immediate access)
-  if (address.toLowerCase() === MASTER_ADMIN_WALLET.toLowerCase()) {
+  // First check explicitly configured client-visible admin wallets for immediate UI access.
+  if (ADMIN_WALLETS.includes(normalizedAddress)) {
     return true;
   }
   
@@ -26,12 +36,11 @@ export async function isAdminWallet(address: string | undefined): Promise<boolea
   // If it doesn't exist, only master admin will have access
   try {
     const { data, error } = await supabase.rpc('is_admin', {
-      p_wallet_address: address.toLowerCase(),
+      p_wallet_address: normalizedAddress,
     });
 
     if (error) {
-      // RPC function may not exist yet - only master admin has access
-      console.warn('Admin check RPC not available, using master admin only:', error.message);
+      console.warn('Admin check RPC not available:', error.message);
       return false;
     }
 
@@ -46,14 +55,13 @@ export async function isAdminWallet(address: string | undefined): Promise<boolea
  * Check if a wallet address is the master admin
  */
 export function isMasterAdmin(address: string | undefined): boolean {
-  if (!address) return false;
-  return address.toLowerCase() === MASTER_ADMIN_WALLET.toLowerCase();
+  const normalizedAddress = normalizeWallet(address);
+  return Boolean(MASTER_ADMIN_WALLET && normalizedAddress === MASTER_ADMIN_WALLET);
 }
 
 /**
  * Synchronous check for master admin (for immediate UI decisions)
  */
 export function isMasterAdminSync(address: string | undefined): boolean {
-  if (!address) return false;
-  return address.toLowerCase() === MASTER_ADMIN_WALLET.toLowerCase();
+  return isMasterAdmin(address);
 }

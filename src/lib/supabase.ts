@@ -1,4 +1,5 @@
 import { createClient } from '@supabase/supabase-js';
+import { adminOperation } from '@/services/adminApi';
 
 // Supabase configuration - Using Vite environment variables
 const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
@@ -154,25 +155,18 @@ export async function upsertSimulation(simulation: {
   image_url: string;
   sort_order?: number;
 }): Promise<string> {
-  const { data, error } = await supabase.rpc('upsert_lore_region', {
-    p_region_id: simulation.region_id,
-    p_name: simulation.name,
-    p_description: simulation.description,
-    p_color: simulation.color,
-    p_cx: simulation.cx,
-    p_cy: simulation.cy,
-    p_thumb_url: simulation.thumb_url,
-    p_background_url: simulation.background_url,
-    p_image_url: simulation.image_url,
-    p_sort_order: simulation.sort_order || 0,
+  return adminOperation<string>('upsertLoreRegion', {
+    region_id: simulation.region_id,
+    name: simulation.name,
+    description: simulation.description,
+    color: simulation.color,
+    cx: simulation.cx,
+    cy: simulation.cy,
+    thumb_url: simulation.thumb_url,
+    background_url: simulation.background_url,
+    image_url: simulation.image_url,
+    sort_order: simulation.sort_order || 0,
   });
-
-  if (error) {
-    console.error('Error upserting simulation:', error);
-    throw error;
-  }
-
-  return data;
 }
 
 // Legacy alias for backward compatibility
@@ -192,24 +186,17 @@ export async function upsertLocation(location: {
   thumb_url: string;
   sort_order?: number;
 }): Promise<string> {
-  const { data, error } = await supabase.rpc('upsert_lore_location', {
-    p_location_id: location.location_id,
-    p_region_id: location.region_id,
-    p_name: location.name,
-    p_description: location.description,
-    p_cx: location.cx,
-    p_cy: location.cy,
-    p_location_type: location.location_type,
-    p_thumb_url: location.thumb_url,
-    p_sort_order: location.sort_order || 0,
+  return adminOperation<string>('upsertLoreLocation', {
+    location_id: location.location_id,
+    region_id: location.region_id,
+    name: location.name,
+    description: location.description,
+    cx: location.cx,
+    cy: location.cy,
+    location_type: location.location_type,
+    thumb_url: location.thumb_url,
+    sort_order: location.sort_order || 0,
   });
-
-  if (error) {
-    console.error('Error upserting location:', error);
-    throw error;
-  }
-
-  return data;
 }
 
 /**
@@ -218,33 +205,18 @@ export async function upsertLocation(location: {
 export async function updateLoreConfig(
   configValue: { multiverseBackgroundUrl: string }
 ): Promise<string> {
-  const { data, error } = await supabase.rpc('update_lore_config', {
-    p_config_key: 'multiverse_background',
-    p_config_value: configValue,
+  return adminOperation<string>('updateLoreConfig', {
+    multiverseBackgroundUrl: configValue.multiverseBackgroundUrl,
   });
-
-  if (error) {
-    console.error('Error updating lore config:', error);
-    throw error;
-  }
-
-  return data;
 }
 
 /**
  * Delete a simulation (admin only - soft delete)
  */
 export async function deleteSimulation(simulationId: string): Promise<boolean> {
-  const { data, error } = await supabase.rpc('delete_lore_region', {
-    p_region_id: simulationId,
+  return adminOperation<boolean>('deleteLoreRegion', {
+    region_id: simulationId,
   });
-
-  if (error) {
-    console.error('Error deleting simulation:', error);
-    throw error;
-  }
-
-  return data;
 }
 
 // Legacy alias for backward compatibility
@@ -254,16 +226,9 @@ export const deleteRegion = deleteSimulation;
  * Delete a location (admin only - soft delete)
  */
 export async function deleteLocation(locationId: string): Promise<boolean> {
-  const { data, error } = await supabase.rpc('delete_lore_location', {
-    p_location_id: locationId,
+  return adminOperation<boolean>('deleteLoreLocation', {
+    location_id: locationId,
   });
-
-  if (error) {
-    console.error('Error deleting location:', error);
-    throw error;
-  }
-
-  return data;
 }
 
 // =====================================================
@@ -724,45 +689,3 @@ export async function upsertLocationCharacter(
 
   return data;
 }
-
-// =====================================================
-// AUTHENTICATION HELPERS
-// =====================================================
-
-/**
- * Check if user is authenticated
- */
-export async function isAuthenticated(): Promise<boolean> {
-  const { data: { session } } = await supabase.auth.getSession();
-  return !!session;
-}
-
-/**
- * Get current user
- */
-export async function getCurrentUser() {
-  const { data: { user } } = await supabase.auth.getUser();
-  return user;
-}
-
-/**
- * Sign in with email
- */
-export async function signIn(email: string, password: string) {
-  const { data, error } = await supabase.auth.signInWithPassword({
-    email,
-    password,
-  });
-
-  if (error) throw error;
-  return data;
-}
-
-/**
- * Sign out
- */
-export async function signOut() {
-  const { error } = await supabase.auth.signOut();
-  if (error) throw error;
-}
-

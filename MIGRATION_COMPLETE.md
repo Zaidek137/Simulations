@@ -22,21 +22,10 @@
 ```
 
 #### 2. Environment Variables
-```diff
-- NEXT_PUBLIC_SUPABASE_URL
-+ VITE_SUPABASE_URL
 
-- NEXT_PUBLIC_SUPABASE_ANON_KEY
-+ VITE_SUPABASE_ANON_KEY
-```
+Vite uses `VITE_*` for browser-readable variables. Update `.env.local` to use:
 
-**⚠️ Action Required:** Update your `.env.local`:
 ```env
-# OLD (delete these)
-# NEXT_PUBLIC_SUPABASE_URL=...
-# NEXT_PUBLIC_SUPABASE_ANON_KEY=...
-
-# NEW (use these)
 VITE_SUPABASE_URL=https://your-project-id.supabase.co
 VITE_SUPABASE_ANON_KEY=your-anon-key-here
 ```
@@ -87,7 +76,7 @@ Build:
 ### Step 1: Clean Install
 
 ```bash
-cd "Interactive Website"
+cd "Simulations"
 
 # Remove old dependencies
 rm -rf node_modules package-lock.json
@@ -112,7 +101,7 @@ VITE_SUPABASE_ANON_KEY=your-anon-key-here
 npm run dev
 ```
 
-Visit: http://localhost:3000
+Visit: http://localhost:5173
 
 **Expected console output:**
 ```
@@ -132,11 +121,7 @@ Should complete without errors. Output goes to `dist/` folder.
 
 **⚠️ Important:** In Vercel project settings, update environment variables:
 
-**Delete these:**
-- `NEXT_PUBLIC_SUPABASE_URL`
-- `NEXT_PUBLIC_SUPABASE_ANON_KEY`
-
-**Add these:**
+**Required client variables:**
 - `VITE_SUPABASE_URL` = your Supabase URL
 - `VITE_SUPABASE_ANON_KEY` = your anon key
 
@@ -215,7 +200,7 @@ Improvement: ~14% smaller
 ### 4. Component Sharing ✅
 Now you can share components between:
 - Main Scavenjer site (`scavenjersite/`)
-- Interactive Lore Map (`Interactive Website/`)
+- Interactive Lore Map (`Simulations/`)
 
 Both use:
 - React 18

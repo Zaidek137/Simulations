@@ -40,7 +40,7 @@ dist/assets/supabase-vendor-CHnXwgyT.js  168.75 kB │ gzip: 44.00 kB
 3. **Framer Motion**: 12.23.26 → 11.0.0
 4. **Styling**: Added Tailwind CSS (matches main site)
 5. **Build System**: Complete restructure
-6. **Environment Variables**: `NEXT_PUBLIC_*` → `VITE_*`
+6. **Environment Variables**: `old Next.js public env variables` → `VITE_*`
 7. **API Routes**: Moved to Vercel serverless functions
 8. **TypeScript Config**: Updated for Vite
 9. **All Components**: Removed "use client" directives
@@ -74,7 +74,7 @@ VITE_SUPABASE_ANON_KEY=your-anon-key-here
 npm run dev
 ```
 
-Visit: http://localhost:3000
+Visit: http://localhost:5173
 
 **Expected output in console:**
 ```
@@ -86,11 +86,7 @@ Visit: http://localhost:3000
 
 **In Vercel Project Settings → Environment Variables:**
 
-Delete:
-- `NEXT_PUBLIC_SUPABASE_URL`
-- `NEXT_PUBLIC_SUPABASE_ANON_KEY`
-
-Add:
+Required client variables:
 - `VITE_SUPABASE_URL` = your Supabase URL
 - `VITE_SUPABASE_ANON_KEY` = your anon key
 

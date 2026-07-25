@@ -22,6 +22,7 @@ declare module 'thirdweb/react' {
   
   export interface Account {
     address: string;
+    signMessage(args: { message: string }): Promise<string>;
   }
   
   export interface Wallet {

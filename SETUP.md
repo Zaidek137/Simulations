@@ -1,94 +1,86 @@
-# 🚀 Setup Guide for Interactive Universe Map
+# Setup Guide for Simulations
 
-## Environment Variables Setup
+## Environment Variables
 
-Create a `.env.local` file in the `Interactive Website` directory with the following content:
+Create `Simulations/.env.local`:
 
 ```env
-# Supabase Configuration
 VITE_SUPABASE_URL=https://your-project-id.supabase.co
-VITE_SUPABASE_ANON_KEY=your-anon-key-here
+VITE_SUPABASE_ANON_KEY=your-supabase-anon-key
+VITE_THIRDWEB_CLIENT_ID=your-thirdweb-client-id
+VITE_SIMULATIONS_ADMIN_WALLETS=0xAdminWalletOne,0xAdminWalletTwo
 ```
 
-### Where to Find Your Supabase Credentials
+These are browser-readable Vite variables. `VITE_SIMULATIONS_ADMIN_WALLETS` only controls immediate admin UI visibility. Do not put service-role keys or private secrets in `VITE_*` variables.
 
-1. Go to [Supabase Dashboard](https://app.supabase.com)
-2. Select your project (same one used for main Scavenjer site)
-3. Go to **Settings** → **API**
-4. Copy:
-   - **Project URL** → `VITE_SUPABASE_URL`
-   - **Project API keys** → **anon/public** → `VITE_SUPABASE_ANON_KEY`
+## Server/Admin Environment
+
+Admin writes require server-only variables in Vercel or your local serverless runtime:
+
+```env
+SUPABASE_SERVICE_ROLE_KEY=your-server-only-service-role-key
+SIMULATIONS_ADMIN_WALLETS=0xAdminWalletOne,0xAdminWalletTwo
+SIMULATIONS_ALLOWED_ORIGIN=http://localhost:5173
+```
+
+Use `SIMULATIONS_ALLOWED_ORIGINS` for multiple comma-separated origins.
+
+## Supabase Credentials
+
+1. Open the Supabase dashboard.
+2. Select the project used by Simulations.
+3. Go to `Settings > API`.
+4. Copy the project URL to `VITE_SUPABASE_URL`.
+5. Copy the anon/public key to `VITE_SUPABASE_ANON_KEY`.
+6. Store the service-role key only in server/runtime settings.
 
 ## Database Migration
 
-Run the migration to create the lore tables:
+Apply the current Simulations and shared lore/index migrations before testing admin writes. If the Supabase CLI is available, use the documented migration flow for the project. If not, run the SQL files manually in the Supabase SQL editor.
 
-### Option 1: Using Supabase CLI (Recommended)
+## Local Development
 
 ```bash
-cd ../scavenjersite
-supabase db push
+cd Simulations
+npm install
+npm run dev
 ```
 
-### Option 2: Manual SQL Execution
+Open:
 
-1. Go to your Supabase Dashboard
-2. Navigate to **SQL Editor**
-3. Open the file: `scavenjersite/supabase/migrations/20250601000000_create_lore_system.sql`
-4. Copy and paste the entire SQL content
-5. Click **Run**
-
-## Verify Setup
-
-After running the migration, verify the tables were created:
-
-```sql
--- Run this in Supabase SQL Editor
-SELECT table_name 
-FROM information_schema.tables 
-WHERE table_schema = 'public' 
-AND table_name LIKE 'lore_%';
+```text
+http://localhost:5173
 ```
 
-You should see:
-- `lore_regions`
-- `lore_locations`
-- `lore_config`
+Admin route:
 
-## Admin Access Setup
-
-To enable admin functionality, ensure your user is in the `admin_users` table:
-
-```sql
--- Check if admin_users table exists
-SELECT * FROM admin_users WHERE email = 'your-email@example.com';
+```text
+http://localhost:5173/admin
 ```
 
-If you need to add yourself as an admin, contact your database administrator or use the existing admin portal on the main site.
-
-## Next Steps
-
-1. ✅ Install dependencies: `npm install`
-2. ✅ Create `.env.local` with Supabase credentials
-3. ✅ Run database migration
-4. ✅ Start dev server: `npm run dev`
-5. ✅ Visit http://localhost:3000
-6. ✅ Test the admin portal (bottom-right corner)
+Connect an authorized wallet before testing admin saves.
 
 ## Troubleshooting
 
-### "Missing Supabase environment variables"
-- Ensure `.env.local` exists in the `Interactive Website` folder
-- Verify the variable names start with `VITE_`
-- Restart the dev server after creating `.env.local`
+### Missing Supabase environment variables
 
-### "Unauthorized: Admin access required"
-- Ensure you're signed in (admin portal, bottom-right)
-- Verify your user exists in `admin_users` table
-- Check that `is_active = true` for your admin user
+- Ensure `.env.local` exists in `Simulations`.
+- Verify the variable names start with `VITE_`.
+- Restart the dev server after editing `.env.local`.
+
+### Unauthorized admin wallet
+
+- Confirm the connected wallet is listed in `SIMULATIONS_ADMIN_WALLETS` and, if the browser UI is not opening, in `VITE_SIMULATIONS_ADMIN_WALLETS`.
+- Restart/redeploy after changing server environment variables.
+
+### Save request rejected
+
+- Confirm the wallet signature prompt was approved.
+- Confirm `SUPABASE_SERVICE_ROLE_KEY` is set server-side.
+- Confirm the browser origin is listed in `SIMULATIONS_ALLOWED_ORIGIN` or `SIMULATIONS_ALLOWED_ORIGINS`.
 
 ### Database connection errors
-- Verify your Supabase URL is correct
-- Check that your anon key is valid
-- Ensure your Supabase project is active (not paused)
 
+- Verify the Supabase URL and anon key.
+- Confirm the Supabase project is active.
+- Confirm required migrations have been applied.

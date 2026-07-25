@@ -1,168 +1,96 @@
-# ⚡ Quick Start Guide
+# Quick Start Guide
 
-Get your Interactive Universe Map running in 10 minutes!
+Get the Simulations universe map running locally with the current Vite and wallet-admin setup.
 
-## 🎯 Answer These Questions First
+## 1. Database
 
-### Q1: Do you have a Supabase project?
-- **YES** → Use your existing Scavenjer Supabase project ✅
-- **NO** → Create one at [supabase.com](https://supabase.com) (free tier available)
+Use the existing Supabase project for Scavenjer/Simulations, or create a new Supabase project.
 
-### Q2: Are you an admin in the database?
-- **YES** → Great! You can manage content ✅
-- **NO** → Ask an existing admin to add you to `admin_users` table
-- **DON'T KNOW** → Run this SQL in Supabase to check:
-  ```sql
-  SELECT * FROM admin_users WHERE email = 'your-email@example.com';
-  ```
+Apply the current migrations for this package and the shared lore/index tables before expecting live data writes to succeed. If the Supabase CLI is not available, run the SQL files through the Supabase SQL editor.
 
----
+## 2. Environment Variables
 
-## 🚀 5-Step Setup
+Create `Simulations/.env.local`:
 
-### Step 1: Database (5 min)
+```env
+VITE_SUPABASE_URL=https://your-project-id.supabase.co
+VITE_SUPABASE_ANON_KEY=your-supabase-anon-key
+VITE_THIRDWEB_CLIENT_ID=your-thirdweb-client-id
+```
 
-1. Open [Supabase Dashboard](https://app.supabase.com)
-2. Go to **SQL Editor**
-3. Copy contents of `scavenjersite/supabase/migrations/20250601000000_create_lore_system.sql`
-4. Paste and click **Run**
-5. Verify: You should see "Success" message
+For admin writes, configure these server/runtime variables in Vercel or your local serverless function environment:
 
-### Step 2: Environment Variables (2 min)
+```env
+SUPABASE_SERVICE_ROLE_KEY=your-server-only-service-role-key
+SIMULATIONS_ADMIN_WALLETS=0xAdminWalletOne,0xAdminWalletTwo
+SIMULATIONS_ALLOWED_ORIGIN=http://localhost:5173
+```
 
-1. In Supabase Dashboard → **Settings** → **API**
-2. Copy **Project URL** and **anon public key**
-3. Create `Interactive Website/.env.local`:
-   ```env
-   NEXT_PUBLIC_SUPABASE_URL=paste-project-url-here
-   NEXT_PUBLIC_SUPABASE_ANON_KEY=paste-anon-key-here
-   ```
+Use `SIMULATIONS_ALLOWED_ORIGINS` for multiple comma-separated origins.
 
-### Step 3: Install & Run (2 min)
+## 3. Install and Run
 
 ```bash
-cd "Interactive Website"
+cd Simulations
 npm install
 npm run dev
 ```
 
-Visit: http://localhost:3000
+Open:
 
-### Step 4: Test (1 min)
-
-- ✅ Map loads?
-- ✅ Can zoom/pan?
-- ✅ Console shows "✅ Loaded data from Supabase"?
-- ✅ Admin portal in bottom-right?
-
-**All good?** → Proceed to Step 5
-**Issues?** → See [Troubleshooting](#troubleshooting) below
-
-### Step 5: Deploy to Vercel (5 min)
-
-1. Go to [vercel.com/new](https://vercel.com/new)
-2. Import your Git repo
-3. Set **Root Directory** to `Interactive Website`
-4. Add environment variables (same as Step 2)
-5. Click **Deploy**
-6. Wait ~2 minutes
-7. Visit your deployment URL
-
-**Done!** 🎉
-
----
-
-## 🎨 Optional: Add Your First Lore
-
-1. Click admin portal (bottom-right)
-2. Sign in with your admin email
-3. Click **"+ Add New Universe"**
-4. Fill in details:
-   - Name: "Test Universe"
-   - Description: "My first lore entry"
-   - Color: Pick any color
-5. Click **"Save Changes to File"**
-6. Refresh page → Your universe appears!
-
----
-
-## 🔗 Update Main Site Navigation
-
-In `scavenjersite/src/components/Header.tsx` (around line 123):
-
-```typescript
-// Change this:
-onClick={() => handleNavigation('/universe')}
-
-// To this:
-href="https://your-vercel-url.vercel.app"  // Your deployment URL
-target="_blank"
-rel="noopener noreferrer"
+```text
+http://localhost:5173
 ```
 
----
+## 4. Test the Public Map
 
-## 🐛 Troubleshooting
+- Map loads.
+- Zoom and pan work.
+- Universe/region data renders from Supabase or fallback data.
+- No admin write controls appear on `/`.
 
-### "Missing Supabase environment variables"
-→ Check `.env.local` exists and has correct variable names (with `NEXT_PUBLIC_` prefix)
-→ Restart dev server after creating `.env.local`
+## 5. Test Admin
 
-### "Unauthorized: Admin access required"
-→ Verify you're in `admin_users` table (see Q2 above)
-→ Make sure `is_active = true` for your user
+1. Open `http://localhost:5173/admin`.
+2. Connect an authorized wallet.
+3. Make a small content edit.
+4. Save.
+5. Confirm the signed admin API accepts the operation.
+6. Refresh and confirm the change persists.
 
-### Map shows default data, not Supabase data
-→ Check browser console for errors
-→ Verify Supabase URL and key are correct
-→ Ensure migration ran successfully (Step 1)
+## Deploy to Vercel
 
-### Build fails on Vercel
-→ Ensure environment variables are added in Vercel settings
-→ Check that `@supabase/supabase-js` is in `package.json`
+1. Import the repository.
+2. Set the root directory to `Simulations`.
+3. Use the Vite build command: `npm run build`.
+4. Use `dist` as the output directory.
+5. Add the client and server environment variables listed above.
+6. Deploy.
 
----
+## Troubleshooting
 
-## 📚 Next Steps
+### Missing Supabase environment variables
 
-- **Add Content:** Use admin portal to add regions and locations
-- **Customize:** Update colors, images, descriptions
-- **Share:** Send link to your team for feedback
-- **Monitor:** Check Vercel analytics for usage
+- Confirm `.env.local` exists in `Simulations`.
+- Confirm the variables use `VITE_SUPABASE_URL` and `VITE_SUPABASE_ANON_KEY`.
+- Restart the dev server after changing env files.
 
----
+### Admin wallet is unauthorized
 
-## 📖 Full Documentation
+- Confirm the connected wallet address matches the built-in admin wallet or `SIMULATIONS_ADMIN_WALLETS`.
+- Confirm address casing is not the issue; comparisons should be lowercase-safe.
 
-- **Setup Details:** See `SETUP.md`
-- **Deployment Guide:** See `DEPLOYMENT.md`
-- **Integration Info:** See `INTEGRATION_SUMMARY.md`
+### Save fails in production
 
----
+- Confirm `SUPABASE_SERVICE_ROLE_KEY` is set server-side.
+- Confirm the browser origin is allowlisted.
+- Check function logs for signature, nonce, payload, or origin validation errors.
 
-## 💡 Pro Tips
+## Success Checklist
 
-1. **Use ImageKit or Cloudinary** for hosting lore images (better than `/public` folder)
-2. **Test on mobile** - the map is touch-enabled!
-3. **Keep localStorage as backup** - it auto-syncs with Supabase
-4. **Use descriptive region IDs** - they're permanent, so choose wisely (e.g., `marbleverse-alpha` not `region1`)
-
----
-
-## ✅ Success Checklist
-
-- [ ] Database migration completed
-- [ ] Local dev server running
-- [ ] Data loads from Supabase
-- [ ] Admin portal works
-- [ ] Deployed to Vercel
-- [ ] Custom domain configured (optional)
-- [ ] Main site navigation updated
-- [ ] First lore content added
-
-**All checked?** You're done! 🎉
-
----
-
-Need help? Check the full documentation or contact your development team.
-
+- Database migrations applied.
+- Local dev server runs.
+- Public map loads.
+- Admin route requires an authorized wallet for writes.
+- Signed admin save works.
+- Production env separates public `VITE_*` variables from server-only secrets.

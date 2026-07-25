@@ -215,14 +215,14 @@ No other dependencies required - uses existing Next.js, React, D3, and Framer Mo
 
 ### Development (.env.local)
 ```env
-NEXT_PUBLIC_SUPABASE_URL=https://your-project-id.supabase.co
-NEXT_PUBLIC_SUPABASE_ANON_KEY=your-anon-key-here
+VITE_SUPABASE_URL=https://your-project-id.supabase.co
+VITE_SUPABASE_ANON_KEY=your-anon-key-here
 ```
 
 ### Production (Vercel)
 Same variables, set in Vercel project settings.
 
-**Important:** These are safe to expose (prefixed with `NEXT_PUBLIC_`)
+**Important:** These are safe to expose (browser-readable Vite variables)
 
 ---
 
@@ -251,7 +251,7 @@ Same variables, set in Vercel project settings.
 - [ ] `npm install` completes without errors
 - [ ] `.env.local` created with correct values
 - [ ] `npm run dev` starts successfully
-- [ ] Site loads at http://localhost:3000
+- [ ] Site loads at http://localhost:5173
 - [ ] Console shows "✅ Loaded data from Supabase"
 - [ ] Map is interactive
 - [ ] Admin portal accessible

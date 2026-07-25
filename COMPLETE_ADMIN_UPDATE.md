@@ -248,7 +248,7 @@ npm run dev
 # Ensure Vercel has these env vars:
 VITE_SUPABASE_URL=...
 VITE_SUPABASE_ANON_KEY=...
-VITE_ADMIN_PASSWORD=YourSecurePassword
+wallet-based admin authorization=YourSecurePassword
 ```
 
 ### 4. Customize (Optional)

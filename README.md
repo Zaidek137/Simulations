@@ -23,10 +23,22 @@ Then edit `.env.local` and add your Supabase credentials:
 ```env
 VITE_SUPABASE_URL=https://your-project-id.supabase.co
 VITE_SUPABASE_ANON_KEY=your-anon-key-here
-VITE_ADMIN_PASSWORD=YourSecurePasswordHere  # Optional: Custom admin password
+VITE_THIRDWEB_CLIENT_ID=your-thirdweb-client-id
 ```
 
 **Note:** You can use the same Supabase project as your main Scavenjer site. The lore system uses separate tables with a `lore_` prefix.
+
+Server-side admin writes are handled by signed wallet requests to `/api/admin/operations`. Configure these only in the Vercel project or server environment, never in client-prefixed env vars:
+
+```env
+SUPABASE_SERVICE_ROLE_KEY=<your-supabase-service-role-key>
+SIMULATIONS_ADMIN_WALLETS=0xAdminWalletOne,0xAdminWalletTwo
+SIMULATIONS_ALLOWED_ORIGIN=https://your-simulations-domain.example
+# Optional comma-separated list for previews or multiple domains:
+SIMULATIONS_ALLOWED_ORIGINS=https://preview-one.example,https://preview-two.example
+```
+
+Production browser requests to the signed admin API are rejected unless their origin matches `SIMULATIONS_ALLOWED_ORIGIN`, `SIMULATIONS_ALLOWED_ORIGINS`, `SIMULATIONS_APP_URL`, `APP_URL`, `VITE_APP_URL`, or the active Vercel deployment URL.
 
 ### 3. Run Database Migrations
 
@@ -74,7 +86,7 @@ All tables use Row Level Security (RLS):
 - **Responsive Design** - Works on desktop and mobile devices
 
 ### Admin Features (/admin)
-- **Protected Admin Portal** - Password-protected management interface
+- **Protected Admin Portal** - Wallet-authorized management interface
 - **Region Management** - Create, edit, and delete universe regions
 - **Location Management** - Add detailed locations to each region
 - **Coordinate Picker** - Visual coordinate selection for precise positioning
@@ -83,29 +95,29 @@ All tables use Row Level Security (RLS):
 
 ## 🔐 Admin Access
 
-The Admin Portal is now **hidden from public view** and requires password authentication.
+The Admin Portal is hidden from public navigation and requires an authorized wallet.
 
 ### Quick Access
 
 1. Navigate to `/admin` route (e.g., `http://localhost:3000/admin`)
-2. Enter the admin password (default: `scavenjer2026`)
+2. Connect an authorized wallet
 3. Access full admin dashboard
 
-### Set Custom Password
+### Configure Admin Wallets
 
-Add to your `.env.local`:
+The master admin wallet is built in for continuity. Add additional wallets with the server-only env var:
 
 ```env
-VITE_ADMIN_PASSWORD=YourSecurePasswordHere
+SIMULATIONS_ADMIN_WALLETS=0xAdminWalletOne,0xAdminWalletTwo
 ```
 
 **📚 For complete admin documentation, see [ADMIN_PORTAL_GUIDE.md](./ADMIN_PORTAL_GUIDE.md)**
 
 ### Security Features
 
-- ✅ Password-protected access
+- ✅ Wallet-signature-protected writes
 - ✅ Hidden from public routes
-- ✅ Session-based authentication
+- ✅ Server-side Supabase service-role mutations
 - ✅ Easy logout functionality
 - ✅ Environment variable configuration
 
@@ -131,7 +143,8 @@ Simulations/
 │   ├── App.tsx                # Router configuration
 │   └── main.tsx               # React entry point
 ├── api/                       # Vercel serverless functions
-│   └── save-data.ts          # Data persistence API
+│   ├── admin/operations.ts   # Signed admin write API
+│   └── save-data.ts          # Disabled legacy bulk write API
 ├── public/                    # Static assets
 │   ├── images/               # Region/location images
 │   └── videos/               # Background videos
@@ -149,7 +162,10 @@ Simulations/
 4. Add environment variables in Vercel dashboard:
    - `VITE_SUPABASE_URL`
    - `VITE_SUPABASE_ANON_KEY`
-   - `VITE_ADMIN_PASSWORD` (your secure admin password)
+   - `VITE_THIRDWEB_CLIENT_ID`
+   - `SUPABASE_SERVICE_ROLE_KEY` or `SUPABASE_SERVICE_KEY` (server-side only)
+   - `SIMULATIONS_ADMIN_WALLETS` (optional additional admins)
+   - `SIMULATIONS_ALLOWED_ORIGIN` or `SIMULATIONS_ALLOWED_ORIGINS` (required for production browser admin writes)
 5. Deploy!
 
 ### Option 2: Custom Domain

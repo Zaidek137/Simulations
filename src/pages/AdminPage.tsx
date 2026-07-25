@@ -7,7 +7,8 @@ import UniverseMap from '@/components/UniverseMap/UniverseMap';
 import LocalPointOverlay from '@/components/LocalPointOverlay/LocalPointOverlay';
 import { Region, Location, UNIVERSE_DATA, CONFIG, UniverseConfig } from '@/data/universe-data';
 import { fetchRegions, fetchLoreConfig } from '@/lib/supabase';
-import { isAdminWallet, MASTER_ADMIN_WALLET } from '@/admin/constants';
+import { isAdminWallet, isMasterAdminSync } from '@/admin/constants';
+import { setSimulationsAdminAccount } from '@/services/adminApi';
 import { useNavigate } from 'react-router-dom';
 import { Shield, AlertTriangle, Wallet } from 'lucide-react';
 
@@ -31,13 +32,18 @@ export default function AdminPage() {
   const [locationOrigin, setLocationOrigin] = useState<{ x: number; y: number } | null>(null);
   const zoomResetRef = useRef<(() => void) | null>(null);
 
+  useEffect(() => {
+    setSimulationsAdminAccount(account || null, 'AdminPage');
+    return () => setSimulationsAdminAccount(null, 'AdminPage');
+  }, [account]);
+
   // Check admin status when wallet connects
   useEffect(() => {
     async function checkAdmin() {
       setCheckingAdmin(true);
       if (account?.address) {
-        // Master admin gets immediate access, no database check needed
-        if (account.address.toLowerCase() === MASTER_ADMIN_WALLET.toLowerCase()) {
+        // Configured master admin gets immediate UI access; server writes still verify signatures.
+        if (isMasterAdminSync(account.address)) {
           setIsAdmin(true);
           setCheckingAdmin(false);
           loadData();
@@ -220,7 +226,7 @@ export default function AdminPage() {
     ? `${account.address.slice(0, 6)}...${account.address.slice(-4)}`
     : '';
 
-  const isMasterAdminWallet = account.address?.toLowerCase() === MASTER_ADMIN_WALLET.toLowerCase();
+  const isMasterAdminWallet = isMasterAdminSync(account.address);
 
   return (
     <div className="min-h-screen bg-black relative overflow-hidden">

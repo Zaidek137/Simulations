@@ -26,7 +26,6 @@ export default function DetailOverlay({ region, onClose }: DetailOverlayProps) {
                     </button>
 
                     <div className={styles.imageContainer}>
-                        {/* eslint-disable-next-line @next/next/no-img-element */}
                         <img
                             src={region.imageUrl}
                             alt={region.name}

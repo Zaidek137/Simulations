@@ -46,7 +46,7 @@ export default function WalletDropdown() {
 
   const handleProfileClick = () => {
     // Open scavenjer.com profile page in new tab
-    window.open('https://scavenjer.com/profile', '_blank');
+    window.open('https://scavenjer.com/profile', '_blank', 'noopener,noreferrer');
     setIsOpen(false);
   };
 
