@@ -23,6 +23,7 @@ type AdminOperationPayload = {
 
 const FIVE_MINUTES_MS = 5 * 60 * 1000;
 const MAX_TEXT_LENGTH = 5000;
+const MAX_REPLAY_CACHE_ENTRIES = 10_000;
 const replayCache = new Map<string, number>();
 
 const ALLOWED_OPERATIONS = new Set([
@@ -130,6 +131,10 @@ function pruneReplayCache(): void {
 
 function reserveNonce(walletAddress: string, nonce: string, timestamp: number): boolean {
   pruneReplayCache();
+  if (replayCache.size >= MAX_REPLAY_CACHE_ENTRIES) {
+    const oldestKey = replayCache.keys().next().value;
+    if (typeof oldestKey === 'string') replayCache.delete(oldestKey);
+  }
   const key = `${walletAddress.toLowerCase()}:${nonce}`;
   if (replayCache.has(key)) return false;
   replayCache.set(key, timestamp + FIVE_MINUTES_MS);
@@ -208,12 +213,12 @@ async function verifyAdminPayload(
     throw new Error('Invalid signature');
   }
 
-  if (!reserveNonce(walletAddress, nonce, timestamp)) {
-    throw new Error('Replay detected');
-  }
-
   if (!(await isAuthorizedAdmin(supabase, walletAddress))) {
     throw new Error('Admin authorization failed');
+  }
+
+  if (!reserveNonce(walletAddress, nonce, timestamp)) {
+    throw new Error('Replay detected');
   }
 
   return {
